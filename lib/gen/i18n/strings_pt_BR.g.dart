@@ -94,7 +94,7 @@ class _TranslationsPairingChoicePtBr implements TranslationsPairingChoiceEn {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Como vocês vão usar o MyCycle?';
+	@override String title({required Object app}) => 'Como vocês vão usar o ${app}?';
 	@override String get subtitle => 'Dá pra mudar depois, mas só uma das duas pessoas registra o ciclo.';
 	@override String get imOwner => 'Quero acompanhar meu ciclo';
 	@override String get imOwnerBody => 'Configure seu ciclo e convide sua parceira quando quiser.';
@@ -177,7 +177,9 @@ class _TranslationsTodayPtBr implements TranslationsTodayEn {
 	@override String get confidenceHigh => 'Alta';
 	@override String lateBanner({required Object days}) => 'Sua menstruação está atrasada ${days} dias.';
 	@override String get logToday => 'Registrar hoje';
+	@override String get emptyTitle => 'Vamos começar';
 	@override String get emptyMessage => 'Sem ciclo ativo. Registre sua primeira menstruação pra começar.';
+	@override String get emptyCta => 'Registrar primeira menstruação';
 	@override String get errorGeneric => 'Algo deu errado ao carregar seu ciclo.';
 }
 
@@ -280,10 +282,10 @@ class _TranslationsBiometricPtBr implements TranslationsBiometricEn {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
-	@override String get lockedTitle => 'MyCycle está bloqueado';
+	@override String lockedTitle({required Object app}) => '${app} está bloqueado';
 	@override String get lockedBody => 'Use Face ID ou sua digital pra desbloquear.';
 	@override String get unlockButton => 'Desbloquear';
-	@override String get unlockReason => 'Desbloquear MyCycle';
+	@override String unlockReason({required Object app}) => 'Desbloquear ${app}';
 	@override String failedAttempts({required Object n}) => '${n} tentativas restantes';
 	@override String get forcedSignOutTitle => 'Tentativas demais';
 	@override String get forcedSignOutBody => 'Por segurança, te desconectei. Entre de novo pra continuar.';
@@ -300,7 +302,7 @@ class _TranslationsAboutPtBr implements TranslationsAboutEn {
 	@override String get title => 'Sobre';
 	@override String get version => 'Versão';
 	@override String get privacyHeading => 'Privacidade';
-	@override String get privacyBody => 'O MyCycle guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.';
+	@override String privacyBody({required Object app}) => 'O ${app} guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.';
 	@override String get openSource => 'Código aberto';
 }
 
@@ -360,6 +362,13 @@ class _TranslationsSettingsPtBr implements TranslationsSettingsEn {
 	@override String get themeDark => 'Escuro';
 	@override String get preferences => 'Preferências';
 	@override String get privacy => 'Privacidade';
+	@override String get dangerZone => 'Zona de risco';
+	@override String get deleteAllData => 'Excluir todos os dados';
+	@override String get deleteAllDataBody => 'Apaga ciclos, registros, casal e sua conta.';
+	@override String get deleteAllDataConfirmTitle => 'Excluir todos os dados?';
+	@override String get deleteAllDataConfirmBody => 'Vamos apagar permanentemente seus ciclos, todos os registros e o vínculo com seu parceiro. Os dados dele também serão excluídos. Essa ação não pode ser desfeita.';
+	@override String get deleteAllDataConfirmAction => 'Sim, excluir tudo';
+	@override String get deleteAllDataError => 'Não consegui excluir tudo. Tenta de novo.';
 }
 
 // Path: placeholder
@@ -397,7 +406,7 @@ extension on TranslationsPtBr {
 			'signIn.networkError' => 'Não consegui conectar ao servidor. Confira sua internet e tente de novo.',
 			'signIn.genericError' => 'Algo deu errado no login. Tenta novamente.',
 			'signIn.signOut' => 'Sair',
-			'pairingChoice.title' => 'Como vocês vão usar o MyCycle?',
+			'pairingChoice.title' => ({required Object app}) => 'Como vocês vão usar o ${app}?',
 			'pairingChoice.subtitle' => 'Dá pra mudar depois, mas só uma das duas pessoas registra o ciclo.',
 			'pairingChoice.imOwner' => 'Quero acompanhar meu ciclo',
 			'pairingChoice.imOwnerBody' => 'Configure seu ciclo e convide sua parceira quando quiser.',
@@ -453,7 +462,9 @@ extension on TranslationsPtBr {
 			'today.confidenceHigh' => 'Alta',
 			'today.lateBanner' => ({required Object days}) => 'Sua menstruação está atrasada ${days} dias.',
 			'today.logToday' => 'Registrar hoje',
+			'today.emptyTitle' => 'Vamos começar',
 			'today.emptyMessage' => 'Sem ciclo ativo. Registre sua primeira menstruação pra começar.',
+			'today.emptyCta' => 'Registrar primeira menstruação',
 			'today.errorGeneric' => 'Algo deu errado ao carregar seu ciclo.',
 			'log.title' => 'Registro do dia',
 			'log.flowTitle' => 'Fluxo',
@@ -511,10 +522,10 @@ extension on TranslationsPtBr {
 			'insights.confidenceHigh' => 'Confiança alta',
 			'insights.sampleSize' => ({required Object n}) => '${n} ciclos registrados',
 			'insights.daysShort' => ({required Object n}) => '${n} d',
-			'biometric.lockedTitle' => 'MyCycle está bloqueado',
+			'biometric.lockedTitle' => ({required Object app}) => '${app} está bloqueado',
 			'biometric.lockedBody' => 'Use Face ID ou sua digital pra desbloquear.',
 			'biometric.unlockButton' => 'Desbloquear',
-			'biometric.unlockReason' => 'Desbloquear MyCycle',
+			'biometric.unlockReason' => ({required Object app}) => 'Desbloquear ${app}',
 			'biometric.failedAttempts' => ({required Object n}) => '${n} tentativas restantes',
 			'biometric.forcedSignOutTitle' => 'Tentativas demais',
 			'biometric.forcedSignOutBody' => 'Por segurança, te desconectei. Entre de novo pra continuar.',
@@ -522,7 +533,7 @@ extension on TranslationsPtBr {
 			'about.title' => 'Sobre',
 			'about.version' => 'Versão',
 			'about.privacyHeading' => 'Privacidade',
-			'about.privacyBody' => 'O MyCycle guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.',
+			'about.privacyBody' => ({required Object app}) => 'O ${app} guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.',
 			'about.openSource' => 'Código aberto',
 			'cycleDefaults.title' => 'Ciclo',
 			'cycleDefaults.cycleLengthLabel' => 'Duração média do ciclo',
@@ -564,6 +575,13 @@ extension on TranslationsPtBr {
 			'settings.themeDark' => 'Escuro',
 			'settings.preferences' => 'Preferências',
 			'settings.privacy' => 'Privacidade',
+			'settings.dangerZone' => 'Zona de risco',
+			'settings.deleteAllData' => 'Excluir todos os dados',
+			'settings.deleteAllDataBody' => 'Apaga ciclos, registros, casal e sua conta.',
+			'settings.deleteAllDataConfirmTitle' => 'Excluir todos os dados?',
+			'settings.deleteAllDataConfirmBody' => 'Vamos apagar permanentemente seus ciclos, todos os registros e o vínculo com seu parceiro. Os dados dele também serão excluídos. Essa ação não pode ser desfeita.',
+			'settings.deleteAllDataConfirmAction' => 'Sim, excluir tudo',
+			'settings.deleteAllDataError' => 'Não consegui excluir tudo. Tenta de novo.',
 			'placeholder.themeAlive' => 'Tema Bloom está vivo.',
 			'placeholder.signedInAs' => ({required Object name}) => 'Olá, ${name}',
 			'placeholder.nextStep' => 'Próximo passo: onboarding.',

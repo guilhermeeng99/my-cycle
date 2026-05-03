@@ -79,7 +79,12 @@ final class TodayLoaded extends TodayState {
 }
 
 final class TodayEmpty extends TodayState {
-  const TodayEmpty();
+  const TodayEmpty({this.user, this.couple});
+  final User? user;
+  final Couple? couple;
+
+  @override
+  List<Object?> get props => [user, couple];
 }
 
 final class TodayError extends TodayState {
@@ -103,7 +108,7 @@ class TodayCubit extends Cubit<TodayState> {
         super(const TodayLoading()) {
     final coupleId = user.coupleId;
     if (coupleId == null) {
-      emit(const TodayEmpty());
+      emit(TodayEmpty(user: user));
       return;
     }
     _start(coupleId);
@@ -154,7 +159,7 @@ class TodayCubit extends Cubit<TodayState> {
     // Couple is required; current cycle is required to render Today.
     if (couple == null) return;
     if (cycle == null) {
-      emit(const TodayEmpty());
+      emit(TodayEmpty(user: _user, couple: couple));
       return;
     }
 

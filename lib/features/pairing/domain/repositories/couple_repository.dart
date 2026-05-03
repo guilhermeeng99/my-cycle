@@ -22,4 +22,9 @@ abstract class CoupleRepository {
     required String coupleId,
     required String userId,
   });
+
+  /// Owner-only: deletes every cycle and day-log under [coupleId], then the
+  /// couple doc itself. The partner's user doc keeps a stale `coupleId`
+  /// until their next session reconciles it.
+  Future<Result<void>> deleteCoupleData(String coupleId);
 }

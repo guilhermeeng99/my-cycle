@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mycycle/app/di/injection_container.dart';
 import 'package:mycycle/app/theme/theme_cubit.dart';
+import 'package:mycycle/core/constants/app_constants.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/core/errors/result.dart';
 import 'package:mycycle/design_system/components/components.dart';
@@ -117,6 +118,12 @@ class _LoadedBody extends StatelessWidget {
 
               const SizedBox(height: BloomSpacing.sectionGap),
               const _SignOutAction(),
+
+              if (isOwner && couple != null) ...<Widget>[
+                const SizedBox(height: BloomSpacing.sectionGap),
+                BloomGroupHeader(t.settings.dangerZone),
+                const _DeleteAllDataAction(),
+              ],
             ],
           ),
         ),
@@ -236,7 +243,7 @@ class _PrivacyGroupState extends State<_PrivacyGroup> {
       if (_bioAvailable ?? false)
         BloomSettingsTile(
           icon: BloomIcons.shield,
-          title: t.biometric.lockedTitle,
+          title: t.biometric.lockedTitle(app: AppConstants.appName),
           subtitle: t.biometric.lockedBody,
           trailing: Switch.adaptive(
             value: widget.biometricEnabled,
@@ -282,7 +289,7 @@ class _AboutGroupState extends State<_AboutGroup> {
   Future<void> _loadVersion() async {
     final info = await PackageInfo.fromPlatform();
     if (!mounted) return;
-    setState(() => _version = '${info.version}+${info.buildNumber}');
+    setState(() => _version = info.version);
   }
 
   @override
@@ -298,7 +305,7 @@ class _AboutGroupState extends State<_AboutGroup> {
         BloomSettingsTile(
           icon: BloomIcons.shield,
           title: t.about.privacyHeading,
-          subtitle: t.about.privacyBody,
+          subtitle: t.about.privacyBody(app: AppConstants.appName),
         ),
       ],
     );
@@ -364,5 +371,124 @@ class _SignOutAction extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _DeleteAllDataAction extends StatelessWidget {
+  const _DeleteAllDataAction();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final theme = Theme.of(context);
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, state) {
+        final isDeleting =
+            state is SettingsLoaded && state.isDeletingAllData;
+        return Material(
+          color: theme.colorScheme.surface,
+          borderRadius: BloomRadii.card,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: isDeleting ? null : () => _confirmAndDelete(context),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BloomSpacing.s16,
+                vertical: BloomSpacing.s12,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(BloomRadii.md),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      BloomIcons.warning,
+                      size: 16,
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                  const SizedBox(width: BloomSpacing.s16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          t.settings.deleteAllData,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: BloomSpacing.s4),
+                        Text(
+                          t.settings.deleteAllDataBody,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isDeleting)
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          theme.colorScheme.error,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final t = context.t;
+    final cubit = context.read<SettingsCubit>();
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return AlertDialog(
+          title: Text(t.settings.deleteAllDataConfirmTitle),
+          content: Text(t.settings.deleteAllDataConfirmBody),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(t.common.cancel),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: theme.colorScheme.onError,
+              ),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(t.settings.deleteAllDataConfirmAction),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true) return;
+
+    final result = await cubit.deleteAllData();
+    if (result is Err<void>) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(t.settings.deleteAllDataError)),
+      );
+    }
   }
 }

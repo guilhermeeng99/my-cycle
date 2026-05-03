@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 
 import 'package:mycycle/app/di/injection_container.dart';
 import 'package:mycycle/core/clock/clock.dart';
+import 'package:mycycle/core/constants/app_constants.dart';
+import 'package:mycycle/core/entities/couple.dart';
+import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/design_system/components/components.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
@@ -29,7 +32,8 @@ class TodayPage extends StatelessWidget {
         child: BlocBuilder<TodayCubit, TodayState>(
           builder: (context, state) => switch (state) {
             TodayLoading() => const Center(child: CircularProgressIndicator()),
-            TodayEmpty() => const _EmptyBody(),
+            TodayEmpty(:final user, :final couple) =>
+              _EmptyBody(user: user, couple: couple),
             TodayError(:final error) => _ErrorBody(error: error),
             TodayLoaded(:final vm) => _LoadedBody(vm: vm),
           },
@@ -180,19 +184,113 @@ class _LogTodayButton extends StatelessWidget {
 }
 
 class _EmptyBody extends StatelessWidget {
-  const _EmptyBody();
+  const _EmptyBody({required this.user, required this.couple});
+  final User? user;
+  final Couple? couple;
 
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(BloomSpacing.screenEdge),
-        child: Text(
-          t.today.emptyMessage,
-          style: Theme.of(context).textTheme.bodyLarge,
-          textAlign: TextAlign.center,
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final locale = Localizations.localeOf(context).toString();
+    final today = getIt<Clock>().now();
+    final dateLabel = DateFormat.MMMMd(locale).format(today);
+    final firstName = _firstName(user?.name ?? '');
+    final coupleForLog = couple;
+
+    return Column(
+      children: <Widget>[
+        BloomLargeHeader(
+          title: firstName.isEmpty
+              ? AppConstants.appName
+              : t.today.greeting(name: firstName),
+          subtitle: t.today.todayLabel(date: dateLabel),
         ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: BloomSpacing.screenEdge,
+            ),
+            child: Column(
+              children: <Widget>[
+                const Spacer(flex: 2),
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[
+                        primary.withValues(alpha: 0.18),
+                        primary.withValues(alpha: 0.08),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child:
+                      Icon(BloomIcons.sparkle, size: 32, color: primary),
+                ),
+                const SizedBox(height: BloomSpacing.s24),
+                Text(
+                  t.today.emptyTitle,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: BloomSpacing.s12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: BloomSpacing.s16,
+                  ),
+                  child: Text(
+                    t.today.emptyMessage,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const Spacer(flex: 3),
+                if (coupleForLog != null)
+                  BloomPrimaryButton(
+                    label: t.today.emptyCta,
+                    icon: BloomIcons.flow,
+                    onPressed: () => _openLogSheet(context, coupleForLog),
+                  ),
+                const SizedBox(height: 140),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static String _firstName(String fullName) {
+    final trimmed = fullName.trim();
+    if (trimmed.isEmpty) return '';
+    return trimmed.split(RegExp(r'\s+')).first;
+  }
+
+  Future<void> _openLogSheet(BuildContext context, Couple couple) async {
+    final saveDayLog = SaveDayLog(
+      cycleRepository: getIt<CycleRepository>(),
+      dayLogRepository: getIt<DayLogRepository>(),
+      clock: getIt<Clock>(),
+    );
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => DayLogSheet(
+        coupleId: couple.id,
+        date: getIt<Clock>().now(),
+        saveDayLog: saveDayLog,
       ),
     );
   }

@@ -44,6 +44,13 @@ abstract class CoupleRemoteDataSource {
     required String userId,
     required DateTime updatedAt,
   });
+
+  /// Owner-only cascade delete: removes every cycle and day-log under the
+  /// couple, then deletes the couple doc itself. Cleaning up the partner's
+  /// user doc is out of scope here — Firestore rules forbid the owner from
+  /// writing to it. The partner's stale `coupleId` is reconciled on their
+  /// next session via `watchCouple` returning null.
+  Future<void> deleteCoupleData(String coupleId);
 }
 
 class CoupleRemoteDataSourceImpl implements CoupleRemoteDataSource {
@@ -160,5 +167,29 @@ class CoupleRemoteDataSourceImpl implements CoupleRemoteDataSource {
         },
       );
     await batch.commit();
+  }
+
+  @override
+  Future<void> deleteCoupleData(String coupleId) async {
+    final coupleRef = _firestore.collection('couples').doc(coupleId);
+    await _deleteCollectionInChunks(coupleRef.collection('cycles'));
+    await _deleteCollectionInChunks(coupleRef.collection('days'));
+    await coupleRef.delete();
+  }
+
+  Future<void> _deleteCollectionInChunks(
+    CollectionReference<Map<String, dynamic>> collection, {
+    int pageSize = 200,
+  }) async {
+    while (true) {
+      final page = await collection.limit(pageSize).get();
+      if (page.docs.isEmpty) return;
+      final batch = _firestore.batch();
+      for (final doc in page.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      if (page.docs.length < pageSize) return;
+    }
   }
 }

@@ -128,8 +128,8 @@ class TranslationsPairingChoiceEn {
 
 	// Translations
 
-	/// en: 'How will you use MyCycle?'
-	String get title => 'How will you use MyCycle?';
+	/// en: 'How will you use $app?'
+	String title({required Object app}) => 'How will you use ${app}?';
 
 	/// en: 'You can change this later, but only one of you tracks the cycle.'
 	String get subtitle => 'You can change this later, but only one of you tracks the cycle.';
@@ -323,8 +323,14 @@ class TranslationsTodayEn {
 	/// en: 'Log today'
 	String get logToday => 'Log today';
 
+	/// en: 'Let's begin'
+	String get emptyTitle => 'Let\'s begin';
+
 	/// en: 'No active cycle. Log your first period to begin.'
 	String get emptyMessage => 'No active cycle. Log your first period to begin.';
+
+	/// en: 'Log first period'
+	String get emptyCta => 'Log first period';
 
 	/// en: 'Something went wrong loading your cycle.'
 	String get errorGeneric => 'Something went wrong loading your cycle.';
@@ -542,8 +548,8 @@ class TranslationsBiometricEn {
 
 	// Translations
 
-	/// en: 'MyCycle is locked'
-	String get lockedTitle => 'MyCycle is locked';
+	/// en: '$app is locked'
+	String lockedTitle({required Object app}) => '${app} is locked';
 
 	/// en: 'Use Face ID or your fingerprint to unlock.'
 	String get lockedBody => 'Use Face ID or your fingerprint to unlock.';
@@ -551,8 +557,8 @@ class TranslationsBiometricEn {
 	/// en: 'Unlock'
 	String get unlockButton => 'Unlock';
 
-	/// en: 'Unlock MyCycle'
-	String get unlockReason => 'Unlock MyCycle';
+	/// en: 'Unlock $app'
+	String unlockReason({required Object app}) => 'Unlock ${app}';
 
 	/// en: '$n attempts left'
 	String failedAttempts({required Object n}) => '${n} attempts left';
@@ -584,8 +590,8 @@ class TranslationsAboutEn {
 	/// en: 'Privacy'
 	String get privacyHeading => 'Privacy';
 
-	/// en: 'MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.'
-	String get privacyBody => 'MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.';
+	/// en: '$app stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.'
+	String privacyBody({required Object app}) => '${app} stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.';
 
 	/// en: 'Open source'
 	String get openSource => 'Open source';
@@ -727,6 +733,27 @@ class TranslationsSettingsEn {
 
 	/// en: 'Privacy'
 	String get privacy => 'Privacy';
+
+	/// en: 'Danger zone'
+	String get dangerZone => 'Danger zone';
+
+	/// en: 'Delete all data'
+	String get deleteAllData => 'Delete all data';
+
+	/// en: 'Erases cycles, logs, couple, and your account.'
+	String get deleteAllDataBody => 'Erases cycles, logs, couple, and your account.';
+
+	/// en: 'Delete everything?'
+	String get deleteAllDataConfirmTitle => 'Delete everything?';
+
+	/// en: 'This will permanently erase your cycles, every log, the link with your partner, and their data too. This can't be undone.'
+	String get deleteAllDataConfirmBody => 'This will permanently erase your cycles, every log, the link with your partner, and their data too. This can\'t be undone.';
+
+	/// en: 'Yes, delete everything'
+	String get deleteAllDataConfirmAction => 'Yes, delete everything';
+
+	/// en: 'Couldn't delete. Please try again.'
+	String get deleteAllDataError => 'Couldn\'t delete. Please try again.';
 }
 
 // Path: placeholder
@@ -770,7 +797,7 @@ extension on Translations {
 			'signIn.networkError' => 'Couldn\'t reach the server. Check your connection and try again.',
 			'signIn.genericError' => 'Something went wrong signing in. Please try again.',
 			'signIn.signOut' => 'Sign out',
-			'pairingChoice.title' => 'How will you use MyCycle?',
+			'pairingChoice.title' => ({required Object app}) => 'How will you use ${app}?',
 			'pairingChoice.subtitle' => 'You can change this later, but only one of you tracks the cycle.',
 			'pairingChoice.imOwner' => 'I want to track my cycle',
 			'pairingChoice.imOwnerBody' => 'Set up your cycle and invite your partner whenever you\'re ready.',
@@ -826,7 +853,9 @@ extension on Translations {
 			'today.confidenceHigh' => 'High',
 			'today.lateBanner' => ({required Object days}) => 'Period seems late by ${days} days.',
 			'today.logToday' => 'Log today',
+			'today.emptyTitle' => 'Let\'s begin',
 			'today.emptyMessage' => 'No active cycle. Log your first period to begin.',
+			'today.emptyCta' => 'Log first period',
 			'today.errorGeneric' => 'Something went wrong loading your cycle.',
 			'log.title' => 'Log entry',
 			'log.flowTitle' => 'Flow',
@@ -884,10 +913,10 @@ extension on Translations {
 			'insights.confidenceHigh' => 'High confidence',
 			'insights.sampleSize' => ({required Object n}) => '${n} cycles tracked',
 			'insights.daysShort' => ({required Object n}) => '${n} d',
-			'biometric.lockedTitle' => 'MyCycle is locked',
+			'biometric.lockedTitle' => ({required Object app}) => '${app} is locked',
 			'biometric.lockedBody' => 'Use Face ID or your fingerprint to unlock.',
 			'biometric.unlockButton' => 'Unlock',
-			'biometric.unlockReason' => 'Unlock MyCycle',
+			'biometric.unlockReason' => ({required Object app}) => 'Unlock ${app}',
 			'biometric.failedAttempts' => ({required Object n}) => '${n} attempts left',
 			'biometric.forcedSignOutTitle' => 'Too many attempts',
 			'biometric.forcedSignOutBody' => 'For your safety we signed you out. Sign in again to continue.',
@@ -895,7 +924,7 @@ extension on Translations {
 			'about.title' => 'About',
 			'about.version' => 'Version',
 			'about.privacyHeading' => 'Privacy',
-			'about.privacyBody' => 'MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.',
+			'about.privacyBody' => ({required Object app}) => '${app} stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.',
 			'about.openSource' => 'Open source',
 			'cycleDefaults.title' => 'Cycle',
 			'cycleDefaults.cycleLengthLabel' => 'Average cycle length',
@@ -937,6 +966,13 @@ extension on Translations {
 			'settings.themeDark' => 'Dark',
 			'settings.preferences' => 'Preferences',
 			'settings.privacy' => 'Privacy',
+			'settings.dangerZone' => 'Danger zone',
+			'settings.deleteAllData' => 'Delete all data',
+			'settings.deleteAllDataBody' => 'Erases cycles, logs, couple, and your account.',
+			'settings.deleteAllDataConfirmTitle' => 'Delete everything?',
+			'settings.deleteAllDataConfirmBody' => 'This will permanently erase your cycles, every log, the link with your partner, and their data too. This can\'t be undone.',
+			'settings.deleteAllDataConfirmAction' => 'Yes, delete everything',
+			'settings.deleteAllDataError' => 'Couldn\'t delete. Please try again.',
 			'placeholder.themeAlive' => 'Bloom theme is alive.',
 			'placeholder.signedInAs' => ({required Object name}) => 'Hello, ${name}',
 			'placeholder.nextStep' => 'Next step: onboarding.',

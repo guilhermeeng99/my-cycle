@@ -19,7 +19,7 @@
     "signOut": "Sair"
   },
   "pairingChoice": {
-    "title": "Como vocês vão usar o MyCycle?",
+    "title": "Como vocês vão usar o $app?",
     "subtitle": "Dá pra mudar depois, mas só uma das duas pessoas registra o ciclo.",
     "imOwner": "Quero acompanhar meu ciclo",
     "imOwnerBody": "Configure seu ciclo e convide sua parceira quando quiser.",
@@ -81,7 +81,9 @@
     "confidenceHigh": "Alta",
     "lateBanner": "Sua menstruação está atrasada $days dias.",
     "logToday": "Registrar hoje",
+    "emptyTitle": "Vamos começar",
     "emptyMessage": "Sem ciclo ativo. Registre sua primeira menstruação pra começar.",
+    "emptyCta": "Registrar primeira menstruação",
     "errorGeneric": "Algo deu errado ao carregar seu ciclo."
   },
   "log": {
@@ -149,10 +151,10 @@
     "daysShort": "$n d"
   },
   "biometric": {
-    "lockedTitle": "MyCycle está bloqueado",
+    "lockedTitle": "$app está bloqueado",
     "lockedBody": "Use Face ID ou sua digital pra desbloquear.",
     "unlockButton": "Desbloquear",
-    "unlockReason": "Desbloquear MyCycle",
+    "unlockReason": "Desbloquear $app",
     "failedAttempts": "$n tentativas restantes",
     "forcedSignOutTitle": "Tentativas demais",
     "forcedSignOutBody": "Por segurança, te desconectei. Entre de novo pra continuar.",
@@ -162,7 +164,7 @@
     "title": "Sobre",
     "version": "Versão",
     "privacyHeading": "Privacidade",
-    "privacyBody": "O MyCycle guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.",
+    "privacyBody": "O $app guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.",
     "openSource": "Código aberto"
   },
   "cycleDefaults": {
@@ -207,7 +209,14 @@
     "themeLight": "Claro",
     "themeDark": "Escuro",
     "preferences": "Preferências",
-    "privacy": "Privacidade"
+    "privacy": "Privacidade",
+    "dangerZone": "Zona de risco",
+    "deleteAllData": "Excluir todos os dados",
+    "deleteAllDataBody": "Apaga ciclos, registros, casal e sua conta.",
+    "deleteAllDataConfirmTitle": "Excluir todos os dados?",
+    "deleteAllDataConfirmBody": "Vamos apagar permanentemente seus ciclos, todos os registros e o vínculo com seu parceiro. Os dados dele também serão excluídos. Essa ação não pode ser desfeita.",
+    "deleteAllDataConfirmAction": "Sim, excluir tudo",
+    "deleteAllDataError": "Não consegui excluir tudo. Tenta de novo."
   },
   "placeholder": {
     "themeAlive": "Tema Bloom está vivo.",

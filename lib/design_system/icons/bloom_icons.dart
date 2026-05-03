@@ -36,6 +36,10 @@ abstract final class BloomIcons {
   static const IconData moon = FontAwesomeIcons.moon;
   static const IconData sun = FontAwesomeIcons.sun;
 
+  // Lock / security
+  static const IconData lock = FontAwesomeIcons.lock;
+  static const IconData fingerprint = FontAwesomeIcons.fingerprint;
+
   // Settings motifs
   static const IconData globe = FontAwesomeIcons.globe;
   static const IconData appearance = FontAwesomeIcons.circleHalfStroke;

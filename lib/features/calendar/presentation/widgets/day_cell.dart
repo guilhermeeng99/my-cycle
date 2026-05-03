@@ -18,90 +18,90 @@ class DayCell extends StatelessWidget {
     final phaseColor = _phaseColor(day.phase);
 
     return InkWell(
-      onTap: onTap,
+      onTap: outOfMonth ? null : onTap,
       borderRadius: BorderRadius.circular(BloomRadii.lg),
       child: Padding(
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(3),
         child: AspectRatio(
           aspectRatio: 1,
-          child: Container(
-            decoration: _decoration(theme, phaseColor),
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                if (day.flow != null)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: _flowColor(day.flow!),
-                      shape: BoxShape.circle,
-                    ),
-                    width: 32,
-                    height: 32,
-                  ),
-                Text(
-                  '${day.date.day}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: _textColor(theme, outOfMonth),
-                    fontWeight: day.isToday ? FontWeight.w700 : FontWeight.w500,
-                  ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              if (day.flow != null)
+                _flowDisc(theme)
+              else if (!outOfMonth)
+                _phaseTint(phaseColor),
+              if (day.isToday) _todayRing(theme),
+              if (day.isPredictedPeriod && day.flow == null)
+                _predictedRing(theme),
+              Text(
+                '${day.date.day}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: _textColor(theme, outOfMonth),
+                  fontWeight: day.isToday ? FontWeight.w700 : FontWeight.w500,
                 ),
-                if (day.isPredictedOvulation)
-                  Positioned(
-                    bottom: 4,
-                    child: Container(
-                      width: 5,
-                      height: 5,
-                      decoration: const BoxDecoration(
-                        color: BloomColors.phaseOvulation,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  )
-                else if (day.hasAnyLog && day.flow == null)
-                  Positioned(
-                    bottom: 4,
-                    child: Container(
-                      width: 4,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: phaseColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+              ),
+              if (day.isPredictedOvulation)
+                Positioned(
+                  bottom: 4,
+                  child: _dot(BloomColors.phaseOvulation, 5),
+                )
+              else if (day.hasAnyLog && day.flow == null && !outOfMonth)
+                Positioned(bottom: 4, child: _dot(phaseColor, 4)),
+            ],
           ),
         ),
       ),
     );
   }
 
-  BoxDecoration _decoration(ThemeData theme, Color phaseColor) {
-    final isPredictedPeriod = day.isPredictedPeriod;
-    final isToday = day.isToday;
-    final outOfMonth = !day.isInDisplayedMonth;
-    final fillOpacity = outOfMonth ? 0.0 : 0.10;
+  Widget _flowDisc(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _flowColor(day.flow!),
+        shape: BoxShape.circle,
+      ),
+    );
+  }
 
-    Border? border;
-    if (isToday) {
-      border = Border.all(color: BloomColors.rose, width: 1.5);
-    } else if (isPredictedPeriod) {
-      border = Border.all(
-        color: BloomColors.rose.withValues(alpha: 0.6),
-      );
-    }
+  Widget _phaseTint(Color phaseColor) {
+    return Container(
+      decoration: BoxDecoration(
+        color: phaseColor.withValues(alpha: 0.10),
+        shape: BoxShape.circle,
+      ),
+    );
+  }
 
-    return BoxDecoration(
-      color: phaseColor.withValues(alpha: fillOpacity),
-      shape: BoxShape.circle,
-      border: border,
+  Widget _todayRing(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: theme.colorScheme.primary, width: 1.5),
+      ),
+    );
+  }
+
+  Widget _predictedRing(ThemeData theme) {
+    return CustomPaint(
+      painter: _DashedCirclePainter(
+        color: BloomColors.phaseMenstrual.withValues(alpha: 0.6),
+      ),
+      child: const SizedBox.expand(),
+    );
+  }
+
+  Widget _dot(Color color, double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 
   Color _textColor(ThemeData theme, bool outOfMonth) {
     if (outOfMonth) {
-      return theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4);
+      return theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3);
     }
     if (day.flow != null) return theme.colorScheme.onPrimary;
     return theme.colorScheme.onSurface;
@@ -126,4 +126,34 @@ class DayCell extends StatelessWidget {
       FlowLevel.heavy => BloomColors.roseDeep,
     };
   }
+}
+
+class _DashedCirclePainter extends CustomPainter {
+  _DashedCirclePainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+    const dashCount = 16;
+    final radius = size.width / 2 - 0.6;
+    final center = size.center(Offset.zero);
+    const sweep = 6.2831853 / dashCount;
+    for (var i = 0; i < dashCount; i++) {
+      final start = i * sweep;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        start,
+        sweep * 0.55,
+        false,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedCirclePainter old) => old.color != color;
 }

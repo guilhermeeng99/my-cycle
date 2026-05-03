@@ -37,7 +37,7 @@ void main() {
       ),
     );
 
-    expect(find.text('MyCycle'), findsOneWidget);
+    expect(find.text('My Cycle'), findsOneWidget);
     expect(find.text('Continue with Google'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

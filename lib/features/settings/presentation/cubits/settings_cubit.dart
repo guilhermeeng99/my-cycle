@@ -31,6 +31,7 @@ final class SettingsLoaded extends SettingsState {
     this.isGeneratingInvite = false,
     this.isLeavingCouple = false,
     this.isSigningOut = false,
+    this.isDeletingAllData = false,
   });
 
   final User user;
@@ -39,6 +40,7 @@ final class SettingsLoaded extends SettingsState {
   final bool isGeneratingInvite;
   final bool isLeavingCouple;
   final bool isSigningOut;
+  final bool isDeletingAllData;
 
   SettingsLoaded copyWith({
     User? user,
@@ -47,6 +49,7 @@ final class SettingsLoaded extends SettingsState {
     bool? isGeneratingInvite,
     bool? isLeavingCouple,
     bool? isSigningOut,
+    bool? isDeletingAllData,
   }) {
     return SettingsLoaded(
       user: user ?? this.user,
@@ -55,6 +58,7 @@ final class SettingsLoaded extends SettingsState {
       isGeneratingInvite: isGeneratingInvite ?? this.isGeneratingInvite,
       isLeavingCouple: isLeavingCouple ?? this.isLeavingCouple,
       isSigningOut: isSigningOut ?? this.isSigningOut,
+      isDeletingAllData: isDeletingAllData ?? this.isDeletingAllData,
     );
   }
 
@@ -66,6 +70,7 @@ final class SettingsLoaded extends SettingsState {
         isGeneratingInvite,
         isLeavingCouple,
         isSigningOut,
+        isDeletingAllData,
       ];
 }
 
@@ -218,6 +223,37 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(s.copyWith(isSigningOut: true));
     final result = await _authRepo.signOut();
     return result;
+  }
+
+  /// Owner-only. Cascades cycle/day data + couple doc, then deletes the
+  /// owner's auth account. Sign-out hooks elsewhere clear the local Hive
+  /// caches; the partner's stale `coupleId` is reconciled on their next
+  /// session (see specs/auth.md BR-7).
+  Future<Result<void>> deleteAllData() async {
+    final s = state;
+    if (s is! SettingsLoaded) return const Ok<void>(null);
+    final coupleId = s.user.coupleId;
+    if (coupleId == null) return const Ok<void>(null);
+
+    emit(s.copyWith(isDeletingAllData: true));
+
+    final cascade = await _coupleRepo.deleteCoupleData(coupleId);
+    if (cascade is Err<void>) {
+      final fresh = state;
+      if (fresh is SettingsLoaded) {
+        emit(fresh.copyWith(isDeletingAllData: false));
+      }
+      return cascade;
+    }
+
+    final accountDelete = await _authRepo.deleteAccount();
+    if (accountDelete is Err<void>) {
+      final fresh = state;
+      if (fresh is SettingsLoaded) {
+        emit(fresh.copyWith(isDeletingAllData: false));
+      }
+    }
+    return accountDelete;
   }
 
   @override

@@ -112,4 +112,19 @@ class CoupleRepositoryImpl implements CoupleRepository {
       return Err<void>(UnknownPairingFailure(e));
     }
   }
+
+  @override
+  Future<Result<void>> deleteCoupleData(String coupleId) async {
+    try {
+      await _remote.deleteCoupleData(coupleId);
+      await _cache?.delete(coupleId);
+      return const Ok<void>(null);
+    } on FirebaseException catch (e, stack) {
+      debugPrint('deleteCoupleData failed: [${e.code}] ${e.message}\n$stack');
+      return Err<void>(PairingStorageFailure(e.code));
+    } on Object catch (e, stack) {
+      debugPrint('deleteCoupleData unexpected: $e\n$stack');
+      return Err<void>(UnknownPairingFailure(e));
+    }
+  }
 }

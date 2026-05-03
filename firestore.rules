@@ -7,6 +7,17 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Personal-use allowlist. Only these two emails can read or write
+    // anything in this project, even though the repo is public.
+    function isAllowedUser() {
+      return isSignedIn() &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email in [
+          'guilhermeeng99@gmail.com',
+          'camila.mndes@gmail.com'
+        ];
+    }
+
     function coupleDoc(coupleId) {
       return get(/databases/$(database)/documents/couples/$(coupleId)).data;
     }
@@ -28,29 +39,29 @@ service cloud.firestore {
 
     // Users — each user reads/writes only their own doc
     match /users/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read, write: if isAllowedUser() && request.auth.uid == userId;
     }
 
     // Couples
     match /couples/{coupleId} {
       // Read: members only
-      allow read: if isSignedIn() && (
+      allow read: if isAllowedUser() && (
         request.auth.uid == resource.data.ownerId ||
         request.auth.uid == resource.data.partnerId
       );
 
       // Create: only as owner, partnerId must be null
-      allow create: if isSignedIn() &&
+      allow create: if isAllowedUser() &&
         request.resource.data.ownerId == request.auth.uid &&
         request.resource.data.partnerId == null;
 
       // Update by owner: cannot change ownerId
-      allow update: if isSignedIn() &&
+      allow update: if isAllowedUser() &&
         request.auth.uid == resource.data.ownerId &&
         request.resource.data.ownerId == resource.data.ownerId;
 
       // Update by partner: only to leave (set partnerId to null)
-      allow update: if isSignedIn() &&
+      allow update: if isAllowedUser() &&
         request.auth.uid == resource.data.partnerId &&
         request.resource.data.partnerId == null &&
         request.resource.data.ownerId == resource.data.ownerId &&
@@ -58,27 +69,34 @@ service cloud.firestore {
         request.resource.data.defaultLutealLength == resource.data.defaultLutealLength;
 
       // Update for redemption: a signed-in user claims an empty couple via inviteCode
-      allow update: if isSignedIn() &&
+      allow update: if isAllowedUser() &&
         resource.data.partnerId == null &&
         request.resource.data.partnerId == request.auth.uid &&
         request.resource.data.ownerId == resource.data.ownerId &&
         request.resource.data.inviteCode == null;
+
+      // Delete: only the owner, used by the "delete all data" flow.
+      // Cycles/days under the couple are removed first by the client; the
+      // partner's stale users/{partnerId}.coupleId is reconciled on their
+      // next session.
+      allow delete: if isAllowedUser() &&
+        request.auth.uid == resource.data.ownerId;
     }
 
     // Cycles — read by both members, write by owner only
     match /couples/{coupleId}/cycles/{cycleId} {
-      allow read: if isCoupleMember(coupleId);
-      allow write: if isCoupleOwner(coupleId);
+      allow read: if isAllowedUser() && isCoupleMember(coupleId);
+      allow write: if isAllowedUser() && isCoupleOwner(coupleId);
     }
 
     // DayLogs — read by both, write per role
     match /couples/{coupleId}/days/{date} {
-      allow read: if isCoupleMember(coupleId);
+      allow read: if isAllowedUser() && isCoupleMember(coupleId);
 
-      allow write: if isCoupleOwner(coupleId);
+      allow write: if isAllowedUser() && isCoupleOwner(coupleId);
 
       // Partner can update only partnerNote (and updatedAt)
-      allow update: if isCouplePartner(coupleId) &&
+      allow update: if isAllowedUser() && isCouplePartner(coupleId) &&
         request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['partnerNote', 'updatedAt']);
     }

@@ -19,7 +19,7 @@
     "signOut": "Sign out"
   },
   "pairingChoice": {
-    "title": "How will you use MyCycle?",
+    "title": "How will you use $app?",
     "subtitle": "You can change this later, but only one of you tracks the cycle.",
     "imOwner": "I want to track my cycle",
     "imOwnerBody": "Set up your cycle and invite your partner whenever you're ready.",
@@ -81,7 +81,9 @@
     "confidenceHigh": "High",
     "lateBanner": "Period seems late by $days days.",
     "logToday": "Log today",
+    "emptyTitle": "Let's begin",
     "emptyMessage": "No active cycle. Log your first period to begin.",
+    "emptyCta": "Log first period",
     "errorGeneric": "Something went wrong loading your cycle."
   },
   "log": {
@@ -149,10 +151,10 @@
     "daysShort": "$n d"
   },
   "biometric": {
-    "lockedTitle": "MyCycle is locked",
+    "lockedTitle": "$app is locked",
     "lockedBody": "Use Face ID or your fingerprint to unlock.",
     "unlockButton": "Unlock",
-    "unlockReason": "Unlock MyCycle",
+    "unlockReason": "Unlock $app",
     "failedAttempts": "$n attempts left",
     "forcedSignOutTitle": "Too many attempts",
     "forcedSignOutBody": "For your safety we signed you out. Sign in again to continue.",
@@ -162,7 +164,7 @@
     "title": "About",
     "version": "Version",
     "privacyHeading": "Privacy",
-    "privacyBody": "MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.",
+    "privacyBody": "$app stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.",
     "openSource": "Open source"
   },
   "cycleDefaults": {
@@ -207,7 +209,14 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "preferences": "Preferences",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "dangerZone": "Danger zone",
+    "deleteAllData": "Delete all data",
+    "deleteAllDataBody": "Erases cycles, logs, couple, and your account.",
+    "deleteAllDataConfirmTitle": "Delete everything?",
+    "deleteAllDataConfirmBody": "This will permanently erase your cycles, every log, the link with your partner, and their data too. This can't be undone.",
+    "deleteAllDataConfirmAction": "Yes, delete everything",
+    "deleteAllDataError": "Couldn't delete. Please try again."
   },
   "placeholder": {
     "themeAlive": "Bloom theme is alive.",

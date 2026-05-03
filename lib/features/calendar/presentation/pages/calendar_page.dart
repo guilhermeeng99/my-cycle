@@ -9,6 +9,7 @@ import 'package:mycycle/features/calendar/domain/entities/calendar_day.dart';
 import 'package:mycycle/features/calendar/presentation/cubits/calendar_cubit.dart';
 import 'package:mycycle/features/calendar/presentation/widgets/day_cell.dart';
 import 'package:mycycle/features/calendar/presentation/widgets/month_header.dart';
+import 'package:mycycle/features/cycle/domain/entities/cycle_phase.dart';
 import 'package:mycycle/features/cycle/domain/repositories/cycle_repository.dart';
 import 'package:mycycle/features/cycle/domain/repositories/day_log_repository.dart';
 import 'package:mycycle/features/logging/domain/usecases/save_day_log.dart';
@@ -22,10 +23,9 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
     return Scaffold(
-      appBar: AppBar(title: Text(t.calendar.title)),
       body: SafeArea(
+        bottom: false,
         child: BlocBuilder<CalendarCubit, CalendarState>(
           builder: (context, state) => switch (state) {
             CalendarLoading() =>
@@ -63,7 +63,7 @@ class _LoadedBody extends StatelessWidget {
           isOnTodayMonth: isOnTodayMonth,
         ),
         const WeekdayHeader(),
-        const SizedBox(height: BloomSpacing.s8),
+        const SizedBox(height: BloomSpacing.s4),
         Expanded(
           child: GridView.builder(
             padding: const EdgeInsets.symmetric(
@@ -82,6 +82,8 @@ class _LoadedBody extends StatelessWidget {
             },
           ),
         ),
+        const _Legend(),
+        const SizedBox(height: 120),
       ],
     );
   }
@@ -107,6 +109,79 @@ class _LoadedBody extends StatelessWidget {
   }
 }
 
+class _Legend extends StatelessWidget {
+  const _Legend();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final phases = <(Color, String)>[
+      (BloomColors.phaseMenstrual, _phaseLabel(t, CyclePhase.menstrual)),
+      (BloomColors.phaseFollicular, _phaseLabel(t, CyclePhase.follicular)),
+      (BloomColors.phaseOvulation, _phaseLabel(t, CyclePhase.ovulation)),
+      (BloomColors.phaseLuteal, _phaseLabel(t, CyclePhase.luteal)),
+    ];
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: BloomSpacing.screenEdge,
+        vertical: BloomSpacing.s12,
+      ),
+      child: Wrap(
+        spacing: BloomSpacing.s12,
+        runSpacing: BloomSpacing.s8,
+        alignment: WrapAlignment.center,
+        children: <Widget>[
+          for (final (color, label) in phases)
+            _LegendChip(color: color, label: label),
+        ],
+      ),
+    );
+  }
+
+  String _phaseLabel(Translations t, CyclePhase phase) {
+    return switch (phase) {
+      CyclePhase.menstrual => t.today.phaseMenstrual,
+      CyclePhase.follicular => t.today.phaseFollicular,
+      CyclePhase.ovulation => t.today.phaseOvulation,
+      CyclePhase.luteal => t.today.phaseLuteal,
+      CyclePhase.unknown => t.today.phaseUnknown,
+    };
+  }
+}
+
+class _LegendChip extends StatelessWidget {
+  const _LegendChip({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.5),
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: BloomSpacing.s8),
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            letterSpacing: 0.4,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ErrorBody extends StatelessWidget {
   const _ErrorBody({required this.error});
   final Object error;
@@ -114,6 +189,7 @@ class _ErrorBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+    final theme = Theme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(BloomSpacing.screenEdge),
@@ -123,12 +199,12 @@ class _ErrorBody extends StatelessWidget {
             Icon(
               BloomIcons.warning,
               size: 48,
-              color: Theme.of(context).colorScheme.error,
+              color: theme.colorScheme.error,
             ),
             const SizedBox(height: BloomSpacing.s16),
             Text(
               t.calendar.errorGeneric,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
           ],

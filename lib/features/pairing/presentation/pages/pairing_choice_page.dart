@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mycycle/app/router/routes.dart';
+import 'package:mycycle/core/constants/app_constants.dart';
 import 'package:mycycle/design_system/components/components.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
@@ -23,7 +24,7 @@ class PairingChoicePage extends StatelessWidget {
           children: <Widget>[
             const SizedBox(height: BloomSpacing.s40),
             BloomLargeHeader(
-              title: t.pairingChoice.title,
+              title: t.pairingChoice.title(app: AppConstants.appName),
               subtitle: t.pairingChoice.subtitle,
             ),
             _ChoiceCard(
