@@ -166,7 +166,7 @@
     "account": "Conta",
     "language": "Idioma",
     "languageEn": "Inglês",
-    "languagePtBr": "Português (Brasil)",
+    "languagePtBr": "Português",
     "languageError": "Não consegui atualizar o idioma. Tenta de novo.",
     "couple": "Casal",
     "coupleNotFound": "Carregando dados do casal…",
@@ -190,9 +190,11 @@
     "notificationsBody": "Vou te lembrar discretamente um dia antes da provável chegada.",
     "notificationsError": "Não consegui atualizar as notificações. Tenta de novo.",
     "appearance": "Aparência",
-    "themeSystem": "Igual ao sistema",
+    "themeSystem": "Auto",
     "themeLight": "Claro",
-    "themeDark": "Escuro"
+    "themeDark": "Escuro",
+    "preferences": "Preferências",
+    "privacy": "Privacidade"
   },
   "placeholder": {
     "themeAlive": "Tema Bloom está vivo.",

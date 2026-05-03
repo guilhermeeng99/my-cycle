@@ -35,4 +35,20 @@ abstract final class BloomIcons {
   static const IconData sparkle = FontAwesomeIcons.wandMagicSparkles;
   static const IconData moon = FontAwesomeIcons.moon;
   static const IconData sun = FontAwesomeIcons.sun;
+
+  // Settings motifs
+  static const IconData globe = FontAwesomeIcons.globe;
+  static const IconData appearance = FontAwesomeIcons.circleHalfStroke;
+  static const IconData bell = FontAwesomeIcons.bell;
+  static const IconData shield = FontAwesomeIcons.shieldHalved;
+  static const IconData cycle = FontAwesomeIcons.repeat;
+  static const IconData person = FontAwesomeIcons.user;
+  static const IconData people = FontAwesomeIcons.userGroup;
+
+  // Bottom nav (filled/regular pairs)
+  static const IconData navToday = FontAwesomeIcons.seedling;
+  static const IconData navCalendar = FontAwesomeIcons.calendarDays;
+  static const IconData navCalendarFilled = FontAwesomeIcons.solidCalendarDays;
+  static const IconData navInsights = FontAwesomeIcons.chartSimple;
+  static const IconData navSettings = FontAwesomeIcons.gear;
 }

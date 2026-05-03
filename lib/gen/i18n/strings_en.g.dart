@@ -603,8 +603,8 @@ class TranslationsSettingsEn {
 	/// en: 'English'
 	String get languageEn => 'English';
 
-	/// en: 'Português (Brasil)'
-	String get languagePtBr => 'Português (Brasil)';
+	/// en: 'Português'
+	String get languagePtBr => 'Português';
 
 	/// en: 'Couldn't update language. Try again.'
 	String get languageError => 'Couldn\'t update language. Try again.';
@@ -675,14 +675,20 @@ class TranslationsSettingsEn {
 	/// en: 'Appearance'
 	String get appearance => 'Appearance';
 
-	/// en: 'Match system'
-	String get themeSystem => 'Match system';
+	/// en: 'Auto'
+	String get themeSystem => 'Auto';
 
 	/// en: 'Light'
 	String get themeLight => 'Light';
 
 	/// en: 'Dark'
 	String get themeDark => 'Dark';
+
+	/// en: 'Preferences'
+	String get preferences => 'Preferences';
+
+	/// en: 'Privacy'
+	String get privacy => 'Privacy';
 }
 
 // Path: placeholder
@@ -851,7 +857,7 @@ extension on Translations {
 			'settings.account' => 'Account',
 			'settings.language' => 'Language',
 			'settings.languageEn' => 'English',
-			'settings.languagePtBr' => 'Português (Brasil)',
+			'settings.languagePtBr' => 'Português',
 			'settings.languageError' => 'Couldn\'t update language. Try again.',
 			'settings.couple' => 'Couple',
 			'settings.coupleNotFound' => 'Couple data is loading…',
@@ -875,9 +881,11 @@ extension on Translations {
 			'settings.notificationsBody' => 'We\'ll quietly remind you the day before your period is likely to start.',
 			'settings.notificationsError' => 'Couldn\'t update notifications. Try again.',
 			'settings.appearance' => 'Appearance',
-			'settings.themeSystem' => 'Match system',
+			'settings.themeSystem' => 'Auto',
 			'settings.themeLight' => 'Light',
 			'settings.themeDark' => 'Dark',
+			'settings.preferences' => 'Preferences',
+			'settings.privacy' => 'Privacy',
 			'placeholder.themeAlive' => 'Bloom theme is alive.',
 			'placeholder.signedInAs' => ({required Object name}) => 'Hello, ${name}',
 			'placeholder.nextStep' => 'Next step: onboarding.',

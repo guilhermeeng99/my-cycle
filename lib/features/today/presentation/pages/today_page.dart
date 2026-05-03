@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:mycycle/app/di/injection_container.dart';
-import 'package:mycycle/app/router/routes.dart';
 import 'package:mycycle/core/clock/clock.dart';
 import 'package:mycycle/core/entities/cycle.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
@@ -36,18 +34,6 @@ class TodayPage extends StatelessWidget {
             );
           },
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(BloomIcons.calendar),
-            tooltip: t.calendar.title,
-            onPressed: () => context.push(AppRoutes.calendar),
-          ),
-          IconButton(
-            icon: const Icon(BloomIcons.settings),
-            tooltip: t.settings.title,
-            onPressed: () => context.push(AppRoutes.settings),
-          ),
-        ],
       ),
       body: SafeArea(
         child: BlocBuilder<TodayCubit, TodayState>(

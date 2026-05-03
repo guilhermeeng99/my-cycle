@@ -166,7 +166,7 @@
     "account": "Account",
     "language": "Language",
     "languageEn": "English",
-    "languagePtBr": "Português (Brasil)",
+    "languagePtBr": "Português",
     "languageError": "Couldn't update language. Try again.",
     "couple": "Couple",
     "coupleNotFound": "Couple data is loading…",
@@ -190,9 +190,11 @@
     "notificationsBody": "We'll quietly remind you the day before your period is likely to start.",
     "notificationsError": "Couldn't update notifications. Try again.",
     "appearance": "Appearance",
-    "themeSystem": "Match system",
+    "themeSystem": "Auto",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "preferences": "Preferences",
+    "privacy": "Privacy"
   },
   "placeholder": {
     "themeAlive": "Bloom theme is alive.",

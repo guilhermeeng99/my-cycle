@@ -318,7 +318,7 @@ class _TranslationsSettingsPtBr implements TranslationsSettingsEn {
 	@override String get account => 'Conta';
 	@override String get language => 'Idioma';
 	@override String get languageEn => 'Inglês';
-	@override String get languagePtBr => 'Português (Brasil)';
+	@override String get languagePtBr => 'Português';
 	@override String get languageError => 'Não consegui atualizar o idioma. Tenta de novo.';
 	@override String get couple => 'Casal';
 	@override String get coupleNotFound => 'Carregando dados do casal…';
@@ -342,9 +342,11 @@ class _TranslationsSettingsPtBr implements TranslationsSettingsEn {
 	@override String get notificationsBody => 'Vou te lembrar discretamente um dia antes da provável chegada.';
 	@override String get notificationsError => 'Não consegui atualizar as notificações. Tenta de novo.';
 	@override String get appearance => 'Aparência';
-	@override String get themeSystem => 'Igual ao sistema';
+	@override String get themeSystem => 'Auto';
 	@override String get themeLight => 'Claro';
 	@override String get themeDark => 'Escuro';
+	@override String get preferences => 'Preferências';
+	@override String get privacy => 'Privacidade';
 }
 
 // Path: placeholder
@@ -507,7 +509,7 @@ extension on TranslationsPtBr {
 			'settings.account' => 'Conta',
 			'settings.language' => 'Idioma',
 			'settings.languageEn' => 'Inglês',
-			'settings.languagePtBr' => 'Português (Brasil)',
+			'settings.languagePtBr' => 'Português',
 			'settings.languageError' => 'Não consegui atualizar o idioma. Tenta de novo.',
 			'settings.couple' => 'Casal',
 			'settings.coupleNotFound' => 'Carregando dados do casal…',
@@ -531,9 +533,11 @@ extension on TranslationsPtBr {
 			'settings.notificationsBody' => 'Vou te lembrar discretamente um dia antes da provável chegada.',
 			'settings.notificationsError' => 'Não consegui atualizar as notificações. Tenta de novo.',
 			'settings.appearance' => 'Aparência',
-			'settings.themeSystem' => 'Igual ao sistema',
+			'settings.themeSystem' => 'Auto',
 			'settings.themeLight' => 'Claro',
 			'settings.themeDark' => 'Escuro',
+			'settings.preferences' => 'Preferências',
+			'settings.privacy' => 'Privacidade',
 			'placeholder.themeAlive' => 'Tema Bloom está vivo.',
 			'placeholder.signedInAs' => ({required Object name}) => 'Olá, ${name}',
 			'placeholder.nextStep' => 'Próximo passo: onboarding.',
