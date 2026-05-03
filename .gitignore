@@ -60,3 +60,4 @@ lib/firebase_options.dart
 # Local environment overrides
 .env
 .env.local
+.ci-setup/
