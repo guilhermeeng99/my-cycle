@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1071997209882",
+    "project_id": "mycycle-app-2026",
+    "storage_bucket": "mycycle-app-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071997209882:android:6e39d874729fcbf0a070a3",
+        "android_client_info": {
+          "package_name": "com.guiga.mycycle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1071997209882-qtuma6f9bdffvci66l3rovqoriog4v5b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guiga.mycycle",
+            "certificate_hash": "d74aeb65775418e7717728af505bad6b63f4fbd4"
+          }
+        },
+        {
+          "client_id": "1071997209882-mjsv5ursdqt3nd56u6adprbpiae6503d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4wBt_a7bpCKJydUj3d8Bsts89vZypKFY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1071997209882-mjsv5ursdqt3nd56u6adprbpiae6503d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

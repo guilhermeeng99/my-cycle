@@ -44,14 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Firebase config — contains project-specific identifiers (API key, app ID,
-# OAuth client IDs). These are technically public per Google's docs, but we
-# keep them out of the repo and ship template files. Each contributor / fork
-# brings their own Firebase project. See README for setup.
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
-lib/firebase_options.dart
-
 # Android release signing
 /android/app/upload-keystore.jks
 /android/app/upload-keystore.jks.base64.txt
