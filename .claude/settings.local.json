@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:pub.dev)",
+      "PowerShell(flutter pub get)",
+      "PowerShell(flutter analyze)",
+      "PowerShell(dart run slang)",
+      "PowerShell(flutter test)"
+    ]
+  }
+}

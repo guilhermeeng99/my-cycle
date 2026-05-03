@@ -1,0 +1,86 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function coupleDoc(coupleId) {
+      return get(/databases/$(database)/documents/couples/$(coupleId)).data;
+    }
+
+    function isCoupleMember(coupleId) {
+      let c = coupleDoc(coupleId);
+      return request.auth.uid == c.ownerId || request.auth.uid == c.partnerId;
+    }
+
+    function isCoupleOwner(coupleId) {
+      let c = coupleDoc(coupleId);
+      return request.auth.uid == c.ownerId;
+    }
+
+    function isCouplePartner(coupleId) {
+      let c = coupleDoc(coupleId);
+      return request.auth.uid == c.partnerId;
+    }
+
+    // Users — each user reads/writes only their own doc
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Couples
+    match /couples/{coupleId} {
+      // Read: members only
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.ownerId ||
+        request.auth.uid == resource.data.partnerId
+      );
+
+      // Create: only as owner, partnerId must be null
+      allow create: if isSignedIn() &&
+        request.resource.data.ownerId == request.auth.uid &&
+        request.resource.data.partnerId == null;
+
+      // Update by owner: cannot change ownerId
+      allow update: if isSignedIn() &&
+        request.auth.uid == resource.data.ownerId &&
+        request.resource.data.ownerId == resource.data.ownerId;
+
+      // Update by partner: only to leave (set partnerId to null)
+      allow update: if isSignedIn() &&
+        request.auth.uid == resource.data.partnerId &&
+        request.resource.data.partnerId == null &&
+        request.resource.data.ownerId == resource.data.ownerId &&
+        request.resource.data.defaultCycleLength == resource.data.defaultCycleLength &&
+        request.resource.data.defaultLutealLength == resource.data.defaultLutealLength;
+
+      // Update for redemption: a signed-in user claims an empty couple via inviteCode
+      allow update: if isSignedIn() &&
+        resource.data.partnerId == null &&
+        request.resource.data.partnerId == request.auth.uid &&
+        request.resource.data.ownerId == resource.data.ownerId &&
+        request.resource.data.inviteCode == null;
+    }
+
+    // Cycles — read by both members, write by owner only
+    match /couples/{coupleId}/cycles/{cycleId} {
+      allow read: if isCoupleMember(coupleId);
+      allow write: if isCoupleOwner(coupleId);
+    }
+
+    // DayLogs — read by both, write per role
+    match /couples/{coupleId}/days/{date} {
+      allow read: if isCoupleMember(coupleId);
+
+      allow write: if isCoupleOwner(coupleId);
+
+      // Partner can update only partnerNote (and updatedAt)
+      allow update: if isCouplePartner(coupleId) &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['partnerNote', 'updatedAt']);
+    }
+  }
+}

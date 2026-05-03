@@ -1,0 +1,3 @@
+base_locale: en
+input_directory: lib/app/assets/i18n
+output_directory: lib/gen/i18n

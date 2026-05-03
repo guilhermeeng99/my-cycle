@@ -1,0 +1,48 @@
+{
+  "_comment": "Template — copy to google-services.json and replace with your Firebase project values. The real file is gitignored. Generate via Firebase console: Project settings → Your apps → Android → google-services.json.",
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "your-firebase-project-id",
+    "storage_bucket": "your-firebase-project-id.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "YOUR_MOBILE_SDK_APP_ID",
+        "android_client_info": {
+          "package_name": "com.guiga.mycycle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "YOUR_ANDROID_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guiga.mycycle",
+            "certificate_hash": "YOUR_DEBUG_OR_RELEASE_SHA1_HASH"
+          }
+        },
+        {
+          "client_id": "YOUR_WEB_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "YOUR_FIREBASE_ANDROID_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "YOUR_WEB_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
