@@ -3,12 +3,12 @@ import 'package:intl/intl.dart';
 
 import 'package:mycycle/core/entities/day_log.dart';
 import 'package:mycycle/core/errors/result.dart';
+import 'package:mycycle/design_system/components/components.dart';
+import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
 import 'package:mycycle/features/logging/domain/usecases/save_day_log.dart';
 import 'package:mycycle/gen/i18n/strings.g.dart';
 
-/// Bottom-sheet log editor — owner only for now (partner sheet ships when
-/// partner pairing arrives).
 class DayLogSheet extends StatefulWidget {
   const DayLogSheet({
     required this.coupleId,
@@ -58,6 +58,9 @@ class _DayLogSheetState extends State<DayLogSheet> {
     if (_saving) return;
     setState(() => _saving = true);
 
+    final messenger = ScaffoldMessenger.of(context);
+    final t = context.t;
+
     final result = await widget.saveDayLog(
       SaveDayLogParams(
         coupleId: widget.coupleId,
@@ -75,131 +78,106 @@ class _DayLogSheetState extends State<DayLogSheet> {
     if (!mounted) return;
     setState(() => _saving = false);
 
-    final t = context.t;
     switch (result) {
       case Ok():
         Navigator.of(context).pop(true);
-        ScaffoldMessenger.of(context)
+        messenger
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(t.log.savedSuccess)));
       case Err():
-        ScaffoldMessenger.of(context)
+        messenger
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(t.log.saveError)));
     }
   }
 
+  Widget _buildBody(BuildContext context) {
+    final t = context.t;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(
+        BloomSpacing.s24,
+        BloomSpacing.s12,
+        BloomSpacing.s24,
+        BloomSpacing.s24,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _Section(label: t.log.flowTitle),
+          _FlowChips(
+            value: _flow,
+            onChanged: (v) => setState(() => _flow = v),
+          ),
+          const SizedBox(height: BloomSpacing.sectionGap),
+          _Section(label: t.log.moodTitle),
+          _MoodChips(
+            value: _mood,
+            onChanged: (v) => setState(() => _mood = v),
+          ),
+          const SizedBox(height: BloomSpacing.sectionGap),
+          _Section(label: t.log.symptomsTitle),
+          _SymptomsChips(
+            value: _symptoms,
+            onChanged: (next) => setState(() => _symptoms = next),
+          ),
+          const SizedBox(height: BloomSpacing.sectionGap),
+          _Section(label: t.log.noteTitle),
+          const SizedBox(height: BloomSpacing.s8),
+          TextField(
+            controller: _noteCtrl,
+            maxLines: 3,
+            maxLength: 500,
+            decoration: InputDecoration(hintText: t.log.notePlaceholder),
+          ),
+          const SizedBox(height: BloomSpacing.s16),
+          _Section(label: t.log.cycleMarkersTitle),
+          const SizedBox(height: BloomSpacing.s8),
+          BloomGroupedList(
+            children: <Widget>[
+              BloomSettingsTile(
+                icon: BloomIcons.flow,
+                title: t.log.markPeriodStarted,
+                trailing: Switch.adaptive(
+                  value: _markPeriodStarted,
+                  onChanged: (v) =>
+                      setState(() => _markPeriodStarted = v),
+                ),
+              ),
+              BloomSettingsTile(
+                icon: BloomIcons.check,
+                title: t.log.markPeriodEnded,
+                trailing: Switch.adaptive(
+                  value: _markPeriodEnded,
+                  onChanged: widget.currentCycleId == null
+                      ? null
+                      : (v) => setState(() => _markPeriodEnded = v),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-    final theme = Theme.of(context);
-    final locale = Localizations.localeOf(context).toString();
-    final dateFmt = DateFormat.MMMMEEEEd(locale);
     final mediaQuery = MediaQuery.of(context);
+    final maxHeight = mediaQuery.size.height * 0.92;
 
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: mediaQuery.viewInsets.bottom,
-      ),
-      child: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            BloomSpacing.screenEdge,
-            BloomSpacing.s8,
-            BloomSpacing.screenEdge,
-            BloomSpacing.s24,
-          ),
+      padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: SafeArea(
+          top: false,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: BloomSpacing.s12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.outline,
-                    borderRadius: BloomRadii.pillShape,
-                  ),
-                ),
-              ),
-              Text(t.log.title, style: theme.textTheme.headlineSmall),
-              const SizedBox(height: BloomSpacing.s4),
-              Text(
-                dateFmt.format(widget.date),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.sectionGap),
-              _SectionLabel(t.log.flowTitle),
-              _FlowChips(
-                value: _flow,
-                onChanged: (v) => setState(() => _flow = v),
-              ),
-              const SizedBox(height: BloomSpacing.sectionGap),
-              _SectionLabel(t.log.symptomsTitle),
-              _SymptomsChips(
-                value: _symptoms,
-                onChanged: (next) => setState(() => _symptoms = next),
-              ),
-              const SizedBox(height: BloomSpacing.sectionGap),
-              _SectionLabel(t.log.moodTitle),
-              _MoodChips(
-                value: _mood,
-                onChanged: (v) => setState(() => _mood = v),
-              ),
-              const SizedBox(height: BloomSpacing.sectionGap),
-              _SectionLabel(t.log.noteTitle),
-              const SizedBox(height: BloomSpacing.s8),
-              TextField(
-                controller: _noteCtrl,
-                maxLines: 3,
-                maxLength: 500,
-                decoration: InputDecoration(
-                  hintText: t.log.notePlaceholder,
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.s16),
-              _SectionLabel(t.log.cycleMarkersTitle),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(t.log.markPeriodStarted),
-                value: _markPeriodStarted,
-                onChanged: (v) => setState(() => _markPeriodStarted = v),
-              ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(t.log.markPeriodEnded),
-                value: _markPeriodEnded,
-                onChanged: widget.currentCycleId == null
-                    ? null
-                    : (v) => setState(() => _markPeriodEnded = v),
-              ),
-              const SizedBox(height: BloomSpacing.s24),
-              ElevatedButton(
-                onPressed: _saving ? null : _save,
-                child: _saving
-                    ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            theme.colorScheme.onPrimary,
-                          ),
-                        ),
-                      )
-                    : Text(t.common.save),
-              ),
-              const SizedBox(height: BloomSpacing.s8),
-              TextButton(
-                onPressed:
-                    _saving ? null : () => Navigator.of(context).pop(false),
-                child: Text(t.common.cancel),
-              ),
+              const _Handle(),
+              _Header(date: widget.date),
+              Flexible(child: _buildBody(context)),
+              _Footer(saving: _saving, onSave: _save),
             ],
           ),
         ),
@@ -208,17 +186,130 @@ class _DayLogSheetState extends State<DayLogSheet> {
   }
 }
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
+class _Handle extends StatelessWidget {
+  const _Handle();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: BloomSpacing.s8),
+      child: Container(
+        width: 40,
+        height: 4,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.outline.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(BloomRadii.pill),
+        ),
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.date});
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final t = context.t;
+    final locale = Localizations.localeOf(context).toString();
+    final dateFmt = DateFormat.MMMMEEEEd(locale);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        BloomSpacing.s24,
+        BloomSpacing.s24,
+        BloomSpacing.s16,
+        BloomSpacing.s8,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  t.log.title,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                const SizedBox(height: BloomSpacing.s4),
+                Text(
+                  dateFmt.format(date),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: context.t.common.cancel,
+            onPressed: () => Navigator.of(context).pop(false),
+            icon: Icon(
+              Icons.close_rounded,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class _Footer extends StatelessWidget {
+  const _Footer({required this.saving, required this.onSave});
+
+  final bool saving;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        border: Border(
+          top: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.3),
+          ),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        BloomSpacing.s24,
+        BloomSpacing.s16,
+        BloomSpacing.s24,
+        BloomSpacing.s16,
+      ),
+      child: BloomPrimaryButton(
+        label: t.common.save,
+        loading: saving,
+        onPressed: onSave,
+      ),
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({required this.label});
   final String label;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Text(
-      label,
-      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            letterSpacing: 0.4,
-          ),
+      label.toUpperCase(),
+      style: theme.textTheme.labelSmall?.copyWith(
+        color: theme.colorScheme.onSurfaceVariant,
+        letterSpacing: 1.1,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }
@@ -238,16 +329,51 @@ class _FlowChips extends StatelessWidget {
           FlowLevel.heavy => t.log.flowHeavy,
         };
     return Padding(
-      padding: const EdgeInsets.only(top: BloomSpacing.s8),
+      padding: const EdgeInsets.only(top: BloomSpacing.s12),
       child: Wrap(
         spacing: BloomSpacing.s8,
         runSpacing: BloomSpacing.s8,
         children: FlowLevel.values
             .map(
-              (l) => FilterChip(
-                label: Text(label(l)),
+              (l) => BloomChoiceChip(
+                label: label(l),
                 selected: value == l,
-                onSelected: (selected) => onChanged(selected ? l : null),
+                tint: BloomColors.phaseMenstrual,
+                onTap: () => onChanged(value == l ? null : l),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _MoodChips extends StatelessWidget {
+  const _MoodChips({required this.value, required this.onChanged});
+  final MoodType? value;
+  final ValueChanged<MoodType?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    String label(MoodType m) => switch (m) {
+          MoodType.happy => t.log.moodHappy,
+          MoodType.calm => t.log.moodCalm,
+          MoodType.irritable => t.log.moodIrritable,
+          MoodType.sad => t.log.moodSad,
+          MoodType.anxious => t.log.moodAnxious,
+        };
+    return Padding(
+      padding: const EdgeInsets.only(top: BloomSpacing.s12),
+      child: Wrap(
+        spacing: BloomSpacing.s8,
+        runSpacing: BloomSpacing.s8,
+        children: MoodType.values
+            .map(
+              (m) => BloomChoiceChip(
+                label: label(m),
+                selected: value == m,
+                onTap: () => onChanged(value == m ? null : m),
               ),
             )
             .toList(),
@@ -275,58 +401,25 @@ class _SymptomsChips extends StatelessWidget {
           SymptomType.nausea => t.log.symptomNausea,
         };
     return Padding(
-      padding: const EdgeInsets.only(top: BloomSpacing.s8),
+      padding: const EdgeInsets.only(top: BloomSpacing.s12),
       child: Wrap(
         spacing: BloomSpacing.s8,
         runSpacing: BloomSpacing.s8,
         children: SymptomType.values
             .map(
-              (s) => FilterChip(
-                label: Text(label(s)),
+              (s) => BloomChoiceChip(
+                label: label(s),
                 selected: value.contains(s),
-                onSelected: (selected) {
+                tint: BloomColors.phaseLuteal,
+                onTap: () {
                   final next = {...value};
-                  if (selected) {
-                    next.add(s);
-                  } else {
+                  if (next.contains(s)) {
                     next.remove(s);
+                  } else {
+                    next.add(s);
                   }
                   onChanged(next);
                 },
-              ),
-            )
-            .toList(),
-      ),
-    );
-  }
-}
-
-class _MoodChips extends StatelessWidget {
-  const _MoodChips({required this.value, required this.onChanged});
-  final MoodType? value;
-  final ValueChanged<MoodType?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    String label(MoodType m) => switch (m) {
-          MoodType.happy => t.log.moodHappy,
-          MoodType.calm => t.log.moodCalm,
-          MoodType.irritable => t.log.moodIrritable,
-          MoodType.sad => t.log.moodSad,
-          MoodType.anxious => t.log.moodAnxious,
-        };
-    return Padding(
-      padding: const EdgeInsets.only(top: BloomSpacing.s8),
-      child: Wrap(
-        spacing: BloomSpacing.s8,
-        runSpacing: BloomSpacing.s8,
-        children: MoodType.values
-            .map(
-              (m) => FilterChip(
-                label: Text(label(m)),
-                selected: value == m,
-                onSelected: (selected) => onChanged(selected ? m : null),
               ),
             )
             .toList(),

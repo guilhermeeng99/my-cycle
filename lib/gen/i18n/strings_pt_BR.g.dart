@@ -37,7 +37,6 @@ class TranslationsPtBr with BaseTranslations<AppLocale, Translations> implements
 	TranslationsPtBr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtBr(meta: meta ?? this.$meta);
 
 	// Translations
-	@override String get appName => 'MyCycle';
 	@override late final _TranslationsCommonPtBr common = _TranslationsCommonPtBr._(_root);
 	@override late final _TranslationsSignInPtBr signIn = _TranslationsSignInPtBr._(_root);
 	@override late final _TranslationsPairingChoicePtBr pairingChoice = _TranslationsPairingChoicePtBr._(_root);
@@ -80,7 +79,7 @@ class _TranslationsSignInPtBr implements TranslationsSignInEn {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
-	@override String get tagline => 'Um diário do ciclo, calmo e privado — só pra vocês dois.';
+	@override String get tagline => 'Um diário do ciclo, calmo e privado, só pra vocês dois.';
 	@override String get continueWithGoogle => 'Continuar com Google';
 	@override String get privacyHint => 'Seus dados ficam no seu próprio Firebase. Só você e seu parceiro têm acesso.';
 	@override String get networkError => 'Não consegui conectar ao servidor. Confira sua internet e tente de novo.';
@@ -96,9 +95,11 @@ class _TranslationsPairingChoicePtBr implements TranslationsPairingChoiceEn {
 
 	// Translations
 	@override String get title => 'Como vocês vão usar o MyCycle?';
-	@override String get subtitle => 'Dá pra mudar depois — mas só uma das duas pessoas registra o ciclo.';
+	@override String get subtitle => 'Dá pra mudar depois, mas só uma das duas pessoas registra o ciclo.';
 	@override String get imOwner => 'Quero acompanhar meu ciclo';
+	@override String get imOwnerBody => 'Configure seu ciclo e convide sua parceira quando quiser.';
 	@override String get imPartner => 'Estou entrando com alguém';
+	@override String get imPartnerBody => 'Use o código de convite que sua parceira compartilhou.';
 }
 
 // Path: partnerPairing
@@ -110,7 +111,7 @@ class _TranslationsPartnerPairingPtBr implements TranslationsPartnerPairingEn {
 	// Translations
 	@override String get title => 'Conectar com seu parceiro';
 	@override String get heading => 'Digite o código de convite';
-	@override String get body => 'Peça pra sua parceira gerar um código de 6 caracteres em Configurações — depois digite aqui.';
+	@override String get body => 'Peça pra sua parceira gerar um código de 6 caracteres em Configurações, depois digite aqui.';
 	@override String get codeHint => 'ABC234';
 	@override String get redeem => 'Conectar';
 	@override String get errorInvalid => 'Esse código não parece certo. Confere e tenta de novo.';
@@ -132,9 +133,9 @@ class _TranslationsOnboardingPtBr implements TranslationsOnboardingEn {
 	@override String get welcomeBody => 'Três perguntinhas rápidas e tá pronto. A gente nunca compartilha seus dados com ninguém.';
 	@override String get getStarted => 'Começar';
 	@override String get lastPeriodTitle => 'Quando começou sua última menstruação?';
-	@override String get lastPeriodBody => 'Escolhe o dia 1 da sua última menstruação — o dia em que o sangramento começou.';
+	@override String get lastPeriodBody => 'Escolhe o dia 1 da sua última menstruação, o dia em que o sangramento começou.';
 	@override String get pickDate => 'Escolher data';
-	@override String get longAgoHint => 'Mais de 60 dias atrás? Pode escolher mesmo assim — as previsões começam com confiança baixa até a gente ter mais dados.';
+	@override String get longAgoHint => 'Mais de 60 dias atrás? Pode escolher mesmo assim, as previsões começam com confiança baixa até a gente ter mais dados.';
 	@override String get cycleLengthTitle => 'Tamanho do seu ciclo';
 	@override String get cycleLengthBody => 'Do dia 1 de uma menstruação até o dia 1 da próxima. A gente vai ajustando conforme você registra.';
 	@override String daysCount({required Object n}) => '${n} dias';
@@ -142,7 +143,7 @@ class _TranslationsOnboardingPtBr implements TranslationsOnboardingEn {
 	@override String get notificationsBody => 'Posso te lembrar discretamente um dia antes da provável chegada. Sem streaks, sem encheção.';
 	@override String get notificationsToggle => 'Quero receber lembretes';
 	@override String get finish => 'Finalizar';
-	@override String get errorNetwork => 'Não consegui salvar — confere a internet e tenta de novo.';
+	@override String get errorNetwork => 'Não consegui salvar, confere a internet e tenta de novo.';
 	@override String get errorValidation => 'Tem alguma resposta que não faz sentido. Dá uma conferida.';
 	@override String get errorGeneric => 'Algo deu errado. Tenta de novo.';
 }
@@ -155,13 +156,25 @@ class _TranslationsTodayPtBr implements TranslationsTodayEn {
 
 	// Translations
 	@override String greeting({required Object name}) => 'Olá, ${name}';
+	@override String todayLabel({required Object date}) => 'Hoje, ${date}';
+	@override String dayOfCycle({required Object n, required Object total}) => 'Dia ${n} de ~${total}';
+	@override String get phaseMenstrual => 'Menstrual';
+	@override String get phaseFollicular => 'Folicular';
+	@override String get phaseOvulation => 'Ovulação';
+	@override String get phaseLuteal => 'Lútea';
+	@override String get phaseUnknown => '—';
+	@override String get phaseCopyMenstrual => 'Descanse. Seu corpo está renovando.';
+	@override String get phaseCopyFollicular => 'Energia em alta. Seu corpo se prepara.';
+	@override String get phaseCopyOvulation => 'Pico de fertilidade. Seu corpo brilha.';
+	@override String get phaseCopyLuteal => 'Hora de ir um pouco mais devagar.';
+	@override String get upcomingTitle => 'O que vem aí';
 	@override String get nextPeriodTitle => 'Próxima menstruação';
 	@override String get fertileWindowTitle => 'Janela fértil';
 	@override String ovulationOn({required Object date}) => 'Ovulação por volta de ${date}';
 	@override String aroundRange({required Object from, required Object to}) => 'Entre ${from} e ${to}';
-	@override String get confidenceLow => 'BAIXA';
-	@override String get confidenceMedium => 'MÉDIA';
-	@override String get confidenceHigh => 'ALTA';
+	@override String get confidenceLow => 'Baixa';
+	@override String get confidenceMedium => 'Média';
+	@override String get confidenceHigh => 'Alta';
 	@override String lateBanner({required Object days}) => 'Sua menstruação está atrasada ${days} dias.';
 	@override String get logToday => 'Registrar hoje';
 	@override String get emptyMessage => 'Sem ciclo ativo. Registre sua primeira menstruação pra começar.';
@@ -241,7 +254,7 @@ class _TranslationsInsightsPtBr implements TranslationsInsightsEn {
 	// Translations
 	@override String get title => 'Insights';
 	@override String get emptyTitle => 'Ainda não tem dados suficientes';
-	@override String get emptyBody => 'Registre alguns ciclos e os padrões aparecerão aqui — médias, regularidade e uma próxima previsão com nível de confiança.';
+	@override String get emptyBody => 'Registre alguns ciclos e os padrões aparecerão aqui, médias, regularidade e uma próxima previsão com nível de confiança.';
 	@override String get averagesTitle => 'Suas médias';
 	@override String get averageCycle => 'Ciclo';
 	@override String get averagePeriod => 'Menstruação';
@@ -251,7 +264,7 @@ class _TranslationsInsightsPtBr implements TranslationsInsightsEn {
 	@override String get regularityLow => 'Bastante variável';
 	@override String regularityHint({required Object n}) => 'Baseado nos últimos ${n} ciclos fechados.';
 	@override String get nextPredictionTitle => 'Próxima previsão';
-	@override String nextPredictionBody({required Object from, required Object to}) => '${from} — ${to}';
+	@override String nextPredictionBody({required Object from, required Object to}) => '${from}, ${to}';
 	@override String ovulationLabel({required Object date}) => 'Ovulação por volta de ${date}';
 	@override String get confidenceLow => 'Confiança baixa';
 	@override String get confidenceMedium => 'Confiança média';
@@ -369,7 +382,6 @@ class _TranslationsPlaceholderPtBr implements TranslationsPlaceholderEn {
 extension on TranslationsPtBr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appName' => 'MyCycle',
 			'common.save' => 'Salvar',
 			'common.cancel' => 'Cancelar',
 			'common.next' => 'Próximo',
@@ -379,19 +391,21 @@ extension on TranslationsPtBr {
 			'common.loading' => 'Carregando…',
 			'common.retry' => 'Tentar novamente',
 			'common.ok' => 'OK',
-			'signIn.tagline' => 'Um diário do ciclo, calmo e privado — só pra vocês dois.',
+			'signIn.tagline' => 'Um diário do ciclo, calmo e privado, só pra vocês dois.',
 			'signIn.continueWithGoogle' => 'Continuar com Google',
 			'signIn.privacyHint' => 'Seus dados ficam no seu próprio Firebase. Só você e seu parceiro têm acesso.',
 			'signIn.networkError' => 'Não consegui conectar ao servidor. Confira sua internet e tente de novo.',
 			'signIn.genericError' => 'Algo deu errado no login. Tenta novamente.',
 			'signIn.signOut' => 'Sair',
 			'pairingChoice.title' => 'Como vocês vão usar o MyCycle?',
-			'pairingChoice.subtitle' => 'Dá pra mudar depois — mas só uma das duas pessoas registra o ciclo.',
+			'pairingChoice.subtitle' => 'Dá pra mudar depois, mas só uma das duas pessoas registra o ciclo.',
 			'pairingChoice.imOwner' => 'Quero acompanhar meu ciclo',
+			'pairingChoice.imOwnerBody' => 'Configure seu ciclo e convide sua parceira quando quiser.',
 			'pairingChoice.imPartner' => 'Estou entrando com alguém',
+			'pairingChoice.imPartnerBody' => 'Use o código de convite que sua parceira compartilhou.',
 			'partnerPairing.title' => 'Conectar com seu parceiro',
 			'partnerPairing.heading' => 'Digite o código de convite',
-			'partnerPairing.body' => 'Peça pra sua parceira gerar um código de 6 caracteres em Configurações — depois digite aqui.',
+			'partnerPairing.body' => 'Peça pra sua parceira gerar um código de 6 caracteres em Configurações, depois digite aqui.',
 			'partnerPairing.codeHint' => 'ABC234',
 			'partnerPairing.redeem' => 'Conectar',
 			'partnerPairing.errorInvalid' => 'Esse código não parece certo. Confere e tenta de novo.',
@@ -404,9 +418,9 @@ extension on TranslationsPtBr {
 			'onboarding.welcomeBody' => 'Três perguntinhas rápidas e tá pronto. A gente nunca compartilha seus dados com ninguém.',
 			'onboarding.getStarted' => 'Começar',
 			'onboarding.lastPeriodTitle' => 'Quando começou sua última menstruação?',
-			'onboarding.lastPeriodBody' => 'Escolhe o dia 1 da sua última menstruação — o dia em que o sangramento começou.',
+			'onboarding.lastPeriodBody' => 'Escolhe o dia 1 da sua última menstruação, o dia em que o sangramento começou.',
 			'onboarding.pickDate' => 'Escolher data',
-			'onboarding.longAgoHint' => 'Mais de 60 dias atrás? Pode escolher mesmo assim — as previsões começam com confiança baixa até a gente ter mais dados.',
+			'onboarding.longAgoHint' => 'Mais de 60 dias atrás? Pode escolher mesmo assim, as previsões começam com confiança baixa até a gente ter mais dados.',
 			'onboarding.cycleLengthTitle' => 'Tamanho do seu ciclo',
 			'onboarding.cycleLengthBody' => 'Do dia 1 de uma menstruação até o dia 1 da próxima. A gente vai ajustando conforme você registra.',
 			'onboarding.daysCount' => ({required Object n}) => '${n} dias',
@@ -414,17 +428,29 @@ extension on TranslationsPtBr {
 			'onboarding.notificationsBody' => 'Posso te lembrar discretamente um dia antes da provável chegada. Sem streaks, sem encheção.',
 			'onboarding.notificationsToggle' => 'Quero receber lembretes',
 			'onboarding.finish' => 'Finalizar',
-			'onboarding.errorNetwork' => 'Não consegui salvar — confere a internet e tenta de novo.',
+			'onboarding.errorNetwork' => 'Não consegui salvar, confere a internet e tenta de novo.',
 			'onboarding.errorValidation' => 'Tem alguma resposta que não faz sentido. Dá uma conferida.',
 			'onboarding.errorGeneric' => 'Algo deu errado. Tenta de novo.',
 			'today.greeting' => ({required Object name}) => 'Olá, ${name}',
+			'today.todayLabel' => ({required Object date}) => 'Hoje, ${date}',
+			'today.dayOfCycle' => ({required Object n, required Object total}) => 'Dia ${n} de ~${total}',
+			'today.phaseMenstrual' => 'Menstrual',
+			'today.phaseFollicular' => 'Folicular',
+			'today.phaseOvulation' => 'Ovulação',
+			'today.phaseLuteal' => 'Lútea',
+			'today.phaseUnknown' => '—',
+			'today.phaseCopyMenstrual' => 'Descanse. Seu corpo está renovando.',
+			'today.phaseCopyFollicular' => 'Energia em alta. Seu corpo se prepara.',
+			'today.phaseCopyOvulation' => 'Pico de fertilidade. Seu corpo brilha.',
+			'today.phaseCopyLuteal' => 'Hora de ir um pouco mais devagar.',
+			'today.upcomingTitle' => 'O que vem aí',
 			'today.nextPeriodTitle' => 'Próxima menstruação',
 			'today.fertileWindowTitle' => 'Janela fértil',
 			'today.ovulationOn' => ({required Object date}) => 'Ovulação por volta de ${date}',
 			'today.aroundRange' => ({required Object from, required Object to}) => 'Entre ${from} e ${to}',
-			'today.confidenceLow' => 'BAIXA',
-			'today.confidenceMedium' => 'MÉDIA',
-			'today.confidenceHigh' => 'ALTA',
+			'today.confidenceLow' => 'Baixa',
+			'today.confidenceMedium' => 'Média',
+			'today.confidenceHigh' => 'Alta',
 			'today.lateBanner' => ({required Object days}) => 'Sua menstruação está atrasada ${days} dias.',
 			'today.logToday' => 'Registrar hoje',
 			'today.emptyMessage' => 'Sem ciclo ativo. Registre sua primeira menstruação pra começar.',
@@ -468,7 +494,7 @@ extension on TranslationsPtBr {
 			'nav.settings' => 'Configurações',
 			'insights.title' => 'Insights',
 			'insights.emptyTitle' => 'Ainda não tem dados suficientes',
-			'insights.emptyBody' => 'Registre alguns ciclos e os padrões aparecerão aqui — médias, regularidade e uma próxima previsão com nível de confiança.',
+			'insights.emptyBody' => 'Registre alguns ciclos e os padrões aparecerão aqui, médias, regularidade e uma próxima previsão com nível de confiança.',
 			'insights.averagesTitle' => 'Suas médias',
 			'insights.averageCycle' => 'Ciclo',
 			'insights.averagePeriod' => 'Menstruação',
@@ -478,7 +504,7 @@ extension on TranslationsPtBr {
 			'insights.regularityLow' => 'Bastante variável',
 			'insights.regularityHint' => ({required Object n}) => 'Baseado nos últimos ${n} ciclos fechados.',
 			'insights.nextPredictionTitle' => 'Próxima previsão',
-			'insights.nextPredictionBody' => ({required Object from, required Object to}) => '${from} — ${to}',
+			'insights.nextPredictionBody' => ({required Object from, required Object to}) => '${from}, ${to}',
 			'insights.ovulationLabel' => ({required Object date}) => 'Ovulação por volta de ${date}',
 			'insights.confidenceLow' => 'Confiança baixa',
 			'insights.confidenceMedium' => 'Confiança média',

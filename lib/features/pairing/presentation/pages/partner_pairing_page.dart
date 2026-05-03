@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mycycle/app/router/routes.dart';
+import 'package:mycycle/design_system/components/components.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
 import 'package:mycycle/features/pairing/domain/failures/pairing_failure.dart';
@@ -24,6 +25,7 @@ class _PartnerPairingPageState extends State<PartnerPairingPage> {
   void initState() {
     super.initState();
     _codeCtrl = TextEditingController();
+    _codeCtrl.addListener(() => setState(() {}));
   }
 
   @override
@@ -35,67 +37,42 @@ class _PartnerPairingPageState extends State<PartnerPairingPage> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(BloomIcons.arrowLeft),
-          onPressed: () => context.go(AppRoutes.pairingChoice),
-        ),
-        title: Text(t.partnerPairing.title),
-      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(BloomSpacing.screenEdge),
-          child: BlocConsumer<PartnerPairingCubit, PartnerPairingState>(
-            listener: (context, state) {
-              if (state is PartnerPairingFailureState) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(_failureLabel(t, state.failure)),
-                    ),
-                  );
-              }
-            },
-            builder: (context, state) {
-              final isRedeeming = state is PartnerPairingRedeeming;
-              return Column(
+        child: BlocConsumer<PartnerPairingCubit, PartnerPairingState>(
+          listener: (context, state) {
+            if (state is PartnerPairingFailureState) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(content: Text(_failureLabel(t, state.failure))),
+                );
+            }
+          },
+          builder: (context, state) {
+            final isRedeeming = state is PartnerPairingRedeeming;
+            final canSubmit = !isRedeeming && _codeCtrl.text.length == 6;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BloomSpacing.screenEdge,
+              ),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  const SizedBox(height: BloomSpacing.s24),
-                  Text(
-                    t.partnerPairing.heading,
-                    style: theme.textTheme.headlineMedium,
+                  _BackBar(
+                    onBack: () => context.go(AppRoutes.pairingChoice),
                   ),
                   const SizedBox(height: BloomSpacing.s8),
-                  Text(
-                    t.partnerPairing.body,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+                  BloomLargeHeader(
+                    title: t.partnerPairing.heading,
+                    subtitle: t.partnerPairing.body,
                   ),
-                  const SizedBox(height: BloomSpacing.sectionGap),
-                  TextField(
+                  _CodeField(
                     controller: _codeCtrl,
                     enabled: !isRedeeming,
-                    autofocus: true,
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                        RegExp('[A-Z2-9]'),
-                      ),
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      letterSpacing: 6,
-                    ),
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: t.partnerPairing.codeHint,
-                    ),
+                    hint: t.partnerPairing.codeHint,
                     onChanged: (_) {
                       context.read<PartnerPairingCubit>().reset();
                     },
@@ -103,30 +80,21 @@ class _PartnerPairingPageState extends State<PartnerPairingPage> {
                         context.read<PartnerPairingCubit>().redeem(v),
                   ),
                   const Spacer(),
-                  ElevatedButton(
-                    onPressed: isRedeeming || _codeCtrl.text.length < 6
-                        ? null
-                        : () => context
+                  BloomPrimaryButton(
+                    label: t.partnerPairing.redeem,
+                    loading: isRedeeming,
+                    icon: BloomIcons.heart,
+                    onPressed: canSubmit
+                        ? () => context
                             .read<PartnerPairingCubit>()
-                            .redeem(_codeCtrl.text),
-                    child: isRedeeming
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                theme.colorScheme.onPrimary,
-                              ),
-                            ),
-                          )
-                        : Text(t.partnerPairing.redeem),
+                            .redeem(_codeCtrl.text)
+                        : null,
                   ),
-                  const SizedBox(height: BloomSpacing.s16),
+                  const SizedBox(height: BloomSpacing.s24),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -143,5 +111,94 @@ class _PartnerPairingPageState extends State<PartnerPairingPage> {
       UnknownPairingFailure() =>
         t.partnerPairing.errorGeneric,
     };
+  }
+}
+
+class _BackBar extends StatelessWidget {
+  const _BackBar({required this.onBack});
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: BloomSpacing.s8),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Material(
+          color: theme.colorScheme.surface,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onBack,
+            child: const Padding(
+              padding: EdgeInsets.all(BloomSpacing.s12),
+              child: Icon(BloomIcons.chevronLeft, size: 14),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeField extends StatelessWidget {
+  const _CodeField({
+    required this.controller,
+    required this.enabled,
+    required this.hint,
+    required this.onChanged,
+    required this.onSubmitted,
+  });
+
+  final TextEditingController controller;
+  final bool enabled;
+  final String hint;
+  final ValueChanged<String> onChanged;
+  final ValueChanged<String> onSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: BloomSpacing.s24,
+        vertical: BloomSpacing.s20,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BloomRadii.card,
+      ),
+      child: TextField(
+        controller: controller,
+        enabled: enabled,
+        autofocus: true,
+        textCapitalization: TextCapitalization.characters,
+        textAlign: TextAlign.center,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp('[A-Z2-9]')),
+          LengthLimitingTextInputFormatter(6),
+        ],
+        style: theme.textTheme.displaySmall?.copyWith(
+          color: theme.colorScheme.primary,
+          letterSpacing: 12,
+          fontWeight: FontWeight.w700,
+        ),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          filled: false,
+          hintText: hint,
+          hintStyle: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant
+                .withValues(alpha: 0.5),
+            letterSpacing: 4,
+          ),
+        ),
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+      ),
+    );
   }
 }

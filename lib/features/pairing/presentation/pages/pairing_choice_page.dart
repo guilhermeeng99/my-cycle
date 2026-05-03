@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mycycle/app/router/routes.dart';
+import 'package:mycycle/design_system/components/components.dart';
+import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
 import 'package:mycycle/gen/i18n/strings.g.dart';
 
@@ -11,50 +13,123 @@ class PairingChoicePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final theme = Theme.of(context);
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(BloomSpacing.screenEdge),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BloomSpacing.screenEdge,
+          ),
+          children: <Widget>[
+            const SizedBox(height: BloomSpacing.s40),
+            BloomLargeHeader(
+              title: t.pairingChoice.title,
+              subtitle: t.pairingChoice.subtitle,
+            ),
+            _ChoiceCard(
+              icon: BloomIcons.heart,
+              title: t.pairingChoice.imOwner,
+              body: t.pairingChoice.imOwnerBody,
+              onTap: () => context.go(AppRoutes.ownerOnboarding),
+              accent: true,
+            ),
+            const SizedBox(height: BloomSpacing.s12),
+            _ChoiceCard(
+              icon: BloomIcons.link,
+              title: t.pairingChoice.imPartner,
+              body: t.pairingChoice.imPartnerBody,
+              onTap: () => context.go(AppRoutes.partnerPairing),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChoiceCard extends StatelessWidget {
+  const _ChoiceCard({
+    required this.icon,
+    required this.title,
+    required this.body,
+    required this.onTap,
+    this.accent = false,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+  final VoidCallback onTap;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tint = theme.colorScheme.primary;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BloomRadii.card,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: accent
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: <Color>[
+                      tint.withValues(alpha: 0.12),
+                      tint.withValues(alpha: 0.04),
+                    ],
+                  )
+                : null,
+            color: accent ? null : theme.colorScheme.surface,
+            borderRadius: BloomRadii.card,
+          ),
+          padding: const EdgeInsets.all(BloomSpacing.s20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Spacer(flex: 2),
-              Text(
-                t.pairingChoice.title,
-                style: theme.textTheme.displayMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: BloomSpacing.s16),
-              Text(
-                t.pairingChoice.subtitle,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: tint.withValues(alpha: 0.16),
+                  shape: BoxShape.circle,
                 ),
-                textAlign: TextAlign.center,
+                alignment: Alignment.center,
+                child: Icon(icon, size: 18, color: tint),
               ),
-              const Spacer(flex: 3),
-              ElevatedButton(
-                onPressed: () => context.go(AppRoutes.ownerOnboarding),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: BloomSpacing.s4,
-                  ),
-                  child: Text(t.pairingChoice.imOwner),
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.s12),
-              OutlinedButton(
-                onPressed: () => context.go(AppRoutes.partnerPairing),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: BloomSpacing.s4,
-                  ),
-                  child: Text(t.pairingChoice.imPartner),
+              const SizedBox(width: BloomSpacing.s16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: BloomSpacing.s4),
+                    Text(
+                      body,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: BloomSpacing.s32),
+              const SizedBox(width: BloomSpacing.s8),
+              Icon(
+                BloomIcons.chevronRight,
+                size: 14,
+                color: theme.colorScheme.onSurfaceVariant
+                    .withValues(alpha: 0.6),
+              ),
             ],
           ),
         ),

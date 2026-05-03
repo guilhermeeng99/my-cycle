@@ -8,6 +8,7 @@ import 'package:mycycle/app/di/injection_container.dart';
 import 'package:mycycle/app/router/app_router.dart';
 import 'package:mycycle/app/theme/app_theme.dart';
 import 'package:mycycle/app/theme/theme_cubit.dart';
+import 'package:mycycle/core/constants/app_constants.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/features/auth/domain/auth_state.dart';
 import 'package:mycycle/features/auth/presentation/cubits/auth_cubit.dart';
@@ -88,7 +89,7 @@ class _MyCycleAppState extends State<MyCycleApp> with WidgetsBindingObserver {
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return MaterialApp.router(
-            title: 'MyCycle',
+            title: AppConstants.appName,
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),
             themeMode: themeMode,

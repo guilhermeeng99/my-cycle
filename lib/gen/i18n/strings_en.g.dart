@@ -40,10 +40,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
-
-	/// en: 'MyCycle'
-	String get appName => 'MyCycle';
-
 	late final TranslationsCommonEn common = TranslationsCommonEn._(_root);
 	late final TranslationsSignInEn signIn = TranslationsSignInEn._(_root);
 	late final TranslationsPairingChoiceEn pairingChoice = TranslationsPairingChoiceEn._(_root);
@@ -105,8 +101,8 @@ class TranslationsSignInEn {
 
 	// Translations
 
-	/// en: 'A calm, private cycle journal — just for the two of you.'
-	String get tagline => 'A calm, private cycle journal — just for the two of you.';
+	/// en: 'A calm, private cycle journal, just for the two of you.'
+	String get tagline => 'A calm, private cycle journal, just for the two of you.';
 
 	/// en: 'Continue with Google'
 	String get continueWithGoogle => 'Continue with Google';
@@ -135,14 +131,20 @@ class TranslationsPairingChoiceEn {
 	/// en: 'How will you use MyCycle?'
 	String get title => 'How will you use MyCycle?';
 
-	/// en: 'You can change this later — but only one of you tracks the cycle.'
-	String get subtitle => 'You can change this later — but only one of you tracks the cycle.';
+	/// en: 'You can change this later, but only one of you tracks the cycle.'
+	String get subtitle => 'You can change this later, but only one of you tracks the cycle.';
 
 	/// en: 'I want to track my cycle'
 	String get imOwner => 'I want to track my cycle';
 
+	/// en: 'Set up your cycle and invite your partner whenever you're ready.'
+	String get imOwnerBody => 'Set up your cycle and invite your partner whenever you\'re ready.';
+
 	/// en: 'I'm joining someone'
 	String get imPartner => 'I\'m joining someone';
+
+	/// en: 'Enter the invite code your partner shared with you.'
+	String get imPartnerBody => 'Enter the invite code your partner shared with you.';
 }
 
 // Path: partnerPairing
@@ -159,8 +161,8 @@ class TranslationsPartnerPairingEn {
 	/// en: 'Enter your invite code'
 	String get heading => 'Enter your invite code';
 
-	/// en: 'Ask your partner to generate a 6-character code in their Settings — then type it here.'
-	String get body => 'Ask your partner to generate a 6-character code in their Settings — then type it here.';
+	/// en: 'Ask your partner to generate a 6-character code in their Settings, then type it here.'
+	String get body => 'Ask your partner to generate a 6-character code in their Settings, then type it here.';
 
 	/// en: 'ABC234'
 	String get codeHint => 'ABC234';
@@ -207,14 +209,14 @@ class TranslationsOnboardingEn {
 	/// en: 'When did your last period start?'
 	String get lastPeriodTitle => 'When did your last period start?';
 
-	/// en: 'Pick day 1 of your most recent period — the day bleeding began.'
-	String get lastPeriodBody => 'Pick day 1 of your most recent period — the day bleeding began.';
+	/// en: 'Pick day 1 of your most recent period, the day bleeding began.'
+	String get lastPeriodBody => 'Pick day 1 of your most recent period, the day bleeding began.';
 
 	/// en: 'Choose a date'
 	String get pickDate => 'Choose a date';
 
-	/// en: 'More than 60 days ago? You can still pick that date — predictions will start with low confidence until we have more data.'
-	String get longAgoHint => 'More than 60 days ago? You can still pick that date — predictions will start with low confidence until we have more data.';
+	/// en: 'More than 60 days ago? You can still pick that date, predictions will start with low confidence until we have more data.'
+	String get longAgoHint => 'More than 60 days ago? You can still pick that date, predictions will start with low confidence until we have more data.';
 
 	/// en: 'Your usual cycle length'
 	String get cycleLengthTitle => 'Your usual cycle length';
@@ -237,8 +239,8 @@ class TranslationsOnboardingEn {
 	/// en: 'Finish setup'
 	String get finish => 'Finish setup';
 
-	/// en: 'Couldn't save — check your connection and try again.'
-	String get errorNetwork => 'Couldn\'t save — check your connection and try again.';
+	/// en: 'Couldn't save, check your connection and try again.'
+	String get errorNetwork => 'Couldn\'t save, check your connection and try again.';
 
 	/// en: 'Some answers don't look right. Please review.'
 	String get errorValidation => 'Some answers don\'t look right. Please review.';
@@ -258,6 +260,42 @@ class TranslationsTodayEn {
 	/// en: 'Hello, $name'
 	String greeting({required Object name}) => 'Hello, ${name}';
 
+	/// en: 'Today, $date'
+	String todayLabel({required Object date}) => 'Today, ${date}';
+
+	/// en: 'Day $n of ~$total'
+	String dayOfCycle({required Object n, required Object total}) => 'Day ${n} of ~${total}';
+
+	/// en: 'Menstrual'
+	String get phaseMenstrual => 'Menstrual';
+
+	/// en: 'Follicular'
+	String get phaseFollicular => 'Follicular';
+
+	/// en: 'Ovulation'
+	String get phaseOvulation => 'Ovulation';
+
+	/// en: 'Luteal'
+	String get phaseLuteal => 'Luteal';
+
+	/// en: '—'
+	String get phaseUnknown => '—';
+
+	/// en: 'Rest. Your body is renewing.'
+	String get phaseCopyMenstrual => 'Rest. Your body is renewing.';
+
+	/// en: 'Energy is rising. Your body is preparing.'
+	String get phaseCopyFollicular => 'Energy is rising. Your body is preparing.';
+
+	/// en: 'Peak fertility. Your body is glowing.'
+	String get phaseCopyOvulation => 'Peak fertility. Your body is glowing.';
+
+	/// en: 'Time to slow down a little.'
+	String get phaseCopyLuteal => 'Time to slow down a little.';
+
+	/// en: 'What's coming'
+	String get upcomingTitle => 'What\'s coming';
+
 	/// en: 'Next period'
 	String get nextPeriodTitle => 'Next period';
 
@@ -270,14 +308,14 @@ class TranslationsTodayEn {
 	/// en: 'Around $from – $to'
 	String aroundRange({required Object from, required Object to}) => 'Around ${from} – ${to}';
 
-	/// en: 'LOW'
-	String get confidenceLow => 'LOW';
+	/// en: 'Low'
+	String get confidenceLow => 'Low';
 
-	/// en: 'MEDIUM'
-	String get confidenceMedium => 'MEDIUM';
+	/// en: 'Medium'
+	String get confidenceMedium => 'Medium';
 
-	/// en: 'HIGH'
-	String get confidenceHigh => 'HIGH';
+	/// en: 'High'
+	String get confidenceHigh => 'High';
 
 	/// en: 'Period seems late by $days days.'
 	String lateBanner({required Object days}) => 'Period seems late by ${days} days.';
@@ -444,8 +482,8 @@ class TranslationsInsightsEn {
 	/// en: 'Not enough data yet'
 	String get emptyTitle => 'Not enough data yet';
 
-	/// en: 'Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.'
-	String get emptyBody => 'Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.';
+	/// en: 'Log a few cycles and your patterns will appear here, averages, regularity, and a confidence-aware next prediction.'
+	String get emptyBody => 'Log a few cycles and your patterns will appear here, averages, regularity, and a confidence-aware next prediction.';
 
 	/// en: 'Your averages'
 	String get averagesTitle => 'Your averages';
@@ -474,8 +512,8 @@ class TranslationsInsightsEn {
 	/// en: 'Next prediction'
 	String get nextPredictionTitle => 'Next prediction';
 
-	/// en: '$from — $to'
-	String nextPredictionBody({required Object from, required Object to}) => '${from} — ${to}';
+	/// en: '$from, $to'
+	String nextPredictionBody({required Object from, required Object to}) => '${from}, ${to}';
 
 	/// en: 'Ovulation around $date'
 	String ovulationLabel({required Object date}) => 'Ovulation around ${date}';
@@ -717,7 +755,6 @@ class TranslationsPlaceholderEn {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appName' => 'MyCycle',
 			'common.save' => 'Save',
 			'common.cancel' => 'Cancel',
 			'common.next' => 'Next',
@@ -727,19 +764,21 @@ extension on Translations {
 			'common.loading' => 'Loading…',
 			'common.retry' => 'Retry',
 			'common.ok' => 'OK',
-			'signIn.tagline' => 'A calm, private cycle journal — just for the two of you.',
+			'signIn.tagline' => 'A calm, private cycle journal, just for the two of you.',
 			'signIn.continueWithGoogle' => 'Continue with Google',
 			'signIn.privacyHint' => 'Your cycle data stays in your Firebase project. Only you and your partner can read it.',
 			'signIn.networkError' => 'Couldn\'t reach the server. Check your connection and try again.',
 			'signIn.genericError' => 'Something went wrong signing in. Please try again.',
 			'signIn.signOut' => 'Sign out',
 			'pairingChoice.title' => 'How will you use MyCycle?',
-			'pairingChoice.subtitle' => 'You can change this later — but only one of you tracks the cycle.',
+			'pairingChoice.subtitle' => 'You can change this later, but only one of you tracks the cycle.',
 			'pairingChoice.imOwner' => 'I want to track my cycle',
+			'pairingChoice.imOwnerBody' => 'Set up your cycle and invite your partner whenever you\'re ready.',
 			'pairingChoice.imPartner' => 'I\'m joining someone',
+			'pairingChoice.imPartnerBody' => 'Enter the invite code your partner shared with you.',
 			'partnerPairing.title' => 'Join your partner',
 			'partnerPairing.heading' => 'Enter your invite code',
-			'partnerPairing.body' => 'Ask your partner to generate a 6-character code in their Settings — then type it here.',
+			'partnerPairing.body' => 'Ask your partner to generate a 6-character code in their Settings, then type it here.',
 			'partnerPairing.codeHint' => 'ABC234',
 			'partnerPairing.redeem' => 'Connect',
 			'partnerPairing.errorInvalid' => 'That code doesn\'t seem right. Double-check and try again.',
@@ -752,9 +791,9 @@ extension on Translations {
 			'onboarding.welcomeBody' => 'Three quick questions and you\'re done. We never share your data with anyone.',
 			'onboarding.getStarted' => 'Get started',
 			'onboarding.lastPeriodTitle' => 'When did your last period start?',
-			'onboarding.lastPeriodBody' => 'Pick day 1 of your most recent period — the day bleeding began.',
+			'onboarding.lastPeriodBody' => 'Pick day 1 of your most recent period, the day bleeding began.',
 			'onboarding.pickDate' => 'Choose a date',
-			'onboarding.longAgoHint' => 'More than 60 days ago? You can still pick that date — predictions will start with low confidence until we have more data.',
+			'onboarding.longAgoHint' => 'More than 60 days ago? You can still pick that date, predictions will start with low confidence until we have more data.',
 			'onboarding.cycleLengthTitle' => 'Your usual cycle length',
 			'onboarding.cycleLengthBody' => 'From day 1 of one period to day 1 of the next. We\'ll fine-tune this as you log cycles.',
 			'onboarding.daysCount' => ({required Object n}) => '${n} days',
@@ -762,17 +801,29 @@ extension on Translations {
 			'onboarding.notificationsBody' => 'We can quietly remind you the day before your period is likely to start. No streaks, no nagging.',
 			'onboarding.notificationsToggle' => 'Send me reminders',
 			'onboarding.finish' => 'Finish setup',
-			'onboarding.errorNetwork' => 'Couldn\'t save — check your connection and try again.',
+			'onboarding.errorNetwork' => 'Couldn\'t save, check your connection and try again.',
 			'onboarding.errorValidation' => 'Some answers don\'t look right. Please review.',
 			'onboarding.errorGeneric' => 'Something went wrong. Please try again.',
 			'today.greeting' => ({required Object name}) => 'Hello, ${name}',
+			'today.todayLabel' => ({required Object date}) => 'Today, ${date}',
+			'today.dayOfCycle' => ({required Object n, required Object total}) => 'Day ${n} of ~${total}',
+			'today.phaseMenstrual' => 'Menstrual',
+			'today.phaseFollicular' => 'Follicular',
+			'today.phaseOvulation' => 'Ovulation',
+			'today.phaseLuteal' => 'Luteal',
+			'today.phaseUnknown' => '—',
+			'today.phaseCopyMenstrual' => 'Rest. Your body is renewing.',
+			'today.phaseCopyFollicular' => 'Energy is rising. Your body is preparing.',
+			'today.phaseCopyOvulation' => 'Peak fertility. Your body is glowing.',
+			'today.phaseCopyLuteal' => 'Time to slow down a little.',
+			'today.upcomingTitle' => 'What\'s coming',
 			'today.nextPeriodTitle' => 'Next period',
 			'today.fertileWindowTitle' => 'Fertile window',
 			'today.ovulationOn' => ({required Object date}) => 'Ovulation around ${date}',
 			'today.aroundRange' => ({required Object from, required Object to}) => 'Around ${from} – ${to}',
-			'today.confidenceLow' => 'LOW',
-			'today.confidenceMedium' => 'MEDIUM',
-			'today.confidenceHigh' => 'HIGH',
+			'today.confidenceLow' => 'Low',
+			'today.confidenceMedium' => 'Medium',
+			'today.confidenceHigh' => 'High',
 			'today.lateBanner' => ({required Object days}) => 'Period seems late by ${days} days.',
 			'today.logToday' => 'Log today',
 			'today.emptyMessage' => 'No active cycle. Log your first period to begin.',
@@ -816,7 +867,7 @@ extension on Translations {
 			'nav.settings' => 'Settings',
 			'insights.title' => 'Insights',
 			'insights.emptyTitle' => 'Not enough data yet',
-			'insights.emptyBody' => 'Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.',
+			'insights.emptyBody' => 'Log a few cycles and your patterns will appear here, averages, regularity, and a confidence-aware next prediction.',
 			'insights.averagesTitle' => 'Your averages',
 			'insights.averageCycle' => 'Cycle',
 			'insights.averagePeriod' => 'Period',
@@ -826,7 +877,7 @@ extension on Translations {
 			'insights.regularityLow' => 'Quite variable',
 			'insights.regularityHint' => ({required Object n}) => 'Based on the last ${n} closed cycles.',
 			'insights.nextPredictionTitle' => 'Next prediction',
-			'insights.nextPredictionBody' => ({required Object from, required Object to}) => '${from} — ${to}',
+			'insights.nextPredictionBody' => ({required Object from, required Object to}) => '${from}, ${to}',
 			'insights.ovulationLabel' => ({required Object date}) => 'Ovulation around ${date}',
 			'insights.confidenceLow' => 'Low confidence',
 			'insights.confidenceMedium' => 'Medium confidence',

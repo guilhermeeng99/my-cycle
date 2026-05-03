@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:mycycle/core/constants/app_constants.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
 import 'package:mycycle/features/startup/presentation/cubits/startup_cubit.dart';
-import 'package:mycycle/gen/i18n/strings.g.dart';
 
 /// First screen rendered while [StartupCubit] resolves auth and runs any
 /// initial work. Once it emits a terminal state, the router redirect takes
@@ -28,7 +27,6 @@ class _StartupPageState extends State<StartupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -39,7 +37,7 @@ class _StartupPageState extends State<StartupPage> {
             children: <Widget>[
               const Spacer(flex: 3),
               Text(
-                t.appName,
+                AppConstants.appName,
                 style: theme.textTheme.displayLarge?.copyWith(
                   color: theme.colorScheme.primary,
                 ),
