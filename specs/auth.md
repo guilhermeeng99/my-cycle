@@ -1,6 +1,6 @@
 # Auth — Specification
 
-> Status: draft v1 · Owner: @guiga · Last updated: 2026-05-03
+> Status: draft v2 · Owner: @guiga · Last updated: 2026-05-03
 
 Auth handles Firebase Auth + Google Sign-In. Required for any cycle-related action — both owner and partner must be signed in.
 
@@ -10,14 +10,23 @@ Auth handles Firebase Auth + Google Sign-In. Required for any cycle-related acti
 
 Single sign-in method: **Google Sign-In** via `firebase_auth` + `google_sign_in`. No email/password. No anonymous mode. Personal app — both users have Google accounts.
 
-After auth, the user is routed by their state:
+The startup flow is sequenced by [`StartupCubit`](startup.md), which gates the redirect:
 
 ```
-sign-in success
- ├── no users/{uid} doc           → onboarding (becomes owner OR enters invite code)
- ├── has user doc, coupleId null  → pairing flow
- └── has user doc, coupleId set   → /today
+cold start
+ │
+ ▼
+StartupPage  ←─── StartupCubit waits for auth resolution + initial work
+ │
+ ├── StartupUnauthenticated         → /sign-in
+ │
+ └── StartupAuthenticated
+       ├── no users/{uid} doc           → owner onboarding
+       ├── has user doc, coupleId null  → pairing choice
+       └── has user doc, coupleId set   → /home
 ```
+
+`AuthCubit` is registered as a DI singleton (`getIt<AuthCubit>()`) and provided at the root via `MultiBlocProvider`. Any screen can read it via `context.read<AuthCubit>()`.
 
 Biometric lock is layered **on top** of the auth state: even when authenticated, the app re-asks for Face ID / fingerprint after 5 minutes of inactivity (opt-in).
 
@@ -31,12 +40,15 @@ Biometric lock is layered **on top** of the auth state: even when authenticated,
 | BR-2 | First-time users (no `users/{uid}` doc) go to onboarding immediately after Firebase auth succeeds. |
 | BR-3 | Returning users with a `coupleId` skip onboarding and pairing — go straight to `/today`. |
 | BR-4 | Returning users without a `coupleId` go to the pairing flow (choose owner or partner role). |
-| BR-5 | Sign-out clears all local Hive boxes and routes to `/sign-in`. |
+| BR-5 | Sign-out wipes every Hive cache (`clearAllCaches`, wired via the `onSignOut` hook on `AuthRepositoryImpl`) and routes to `/sign-in`. |
 | BR-6 | Account deletion: removes `users/{uid}` doc, dissolves or leaves the couple, revokes Firebase auth credential. **Two-step confirmation required.** |
 | BR-7 | If the owner deletes their account, the couple is dissolved. The partner sees a "Couple ended" notice on next launch. |
 | BR-8 | Biometric lock (Face ID / fingerprint) is opt-in via Settings. When enabled, app requires unlock on resume after 5 minutes of inactivity. |
 | BR-9 | Biometric unlock failed 3 times → force full Google re-auth. |
-| BR-10 | All authenticated routes are protected by an `AuthGuard` redirect in the router. Unauthenticated access redirects to `/sign-in`. |
+| BR-10 | All authenticated routes are protected by the router redirect, which considers both `StartupState` and `AuthState`. Unauthenticated access redirects to `/sign-in`. |
+| BR-11 | While `StartupState` is `Initial` or `Loading`, every navigation lands on the splash route (`/`). The redirect only branches on auth once startup has emitted a terminal state. |
+| BR-12 | When [biometric lock](biometric.md) is enabled and the lock state is `Locked`, every navigation lands on `/biometric-lock` until unlock or forced sign-out. |
+| BR-13 | `AuthRepositoryImpl` is wired with a `HiveDocCache<User>` (see [hive_cache.md](hive_cache.md)). On `watchAuthState`, the cached user is yielded synchronously before the live Firestore read so the splash hands off to home immediately. |
 
 ---
 

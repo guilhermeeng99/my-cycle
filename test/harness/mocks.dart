@@ -8,6 +8,7 @@ import 'package:mycycle/features/cycle/data/datasources/cycle_remote_datasource.
 import 'package:mycycle/features/cycle/domain/repositories/cycle_repository.dart';
 import 'package:mycycle/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:mycycle/features/pairing/domain/repositories/couple_repository.dart';
+import 'package:mycycle/features/settings/domain/repositories/settings_repository.dart';
 
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 
@@ -20,6 +21,8 @@ class MockCycleRemoteDataSource extends Mock implements CycleRemoteDataSource {}
 class MockCycleRepository extends Mock implements CycleRepository {}
 
 class MockCoupleRepository extends Mock implements CoupleRepository {}
+
+class MockSettingsRepository extends Mock implements SettingsRepository {}
 
 class MockClock extends Mock implements Clock {}
 

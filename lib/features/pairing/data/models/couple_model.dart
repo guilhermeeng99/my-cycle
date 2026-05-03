@@ -15,6 +15,22 @@ class CoupleModel extends Couple {
     super.defaultLutealLength,
   });
 
+  factory CoupleModel.fromCacheJson(Map<String, dynamic> json) {
+    DateTime? millisToDate(Object? value) =>
+        value is int ? DateTime.fromMillisecondsSinceEpoch(value) : null;
+    return CoupleModel(
+      id: json['id'] as String,
+      ownerId: json['ownerId'] as String,
+      partnerId: json['partnerId'] as String?,
+      inviteCode: json['inviteCode'] as String?,
+      inviteExpiresAt: millisToDate(json['inviteExpiresAt']),
+      defaultCycleLength: json['defaultCycleLength'] as int? ?? 28,
+      defaultLutealLength: json['defaultLutealLength'] as int? ?? 14,
+      createdAt: millisToDate(json['createdAt']) ?? DateTime.now(),
+      updatedAt: millisToDate(json['updatedAt']) ?? DateTime.now(),
+    );
+  }
+
   factory CoupleModel.fromMap(Map<String, dynamic> data, String id) {
     return CoupleModel(
       id: id,
@@ -27,6 +43,20 @@ class CoupleModel extends Couple {
       createdAt: _parseDateTime(data['createdAt']) ?? DateTime.now(),
       updatedAt: _parseDateTime(data['updatedAt']) ?? DateTime.now(),
     );
+  }
+
+  Map<String, dynamic> toCacheJson() {
+    return <String, dynamic>{
+      'id': id,
+      'ownerId': ownerId,
+      'partnerId': partnerId,
+      'inviteCode': inviteCode,
+      'inviteExpiresAt': inviteExpiresAt?.millisecondsSinceEpoch,
+      'defaultCycleLength': defaultCycleLength,
+      'defaultLutealLength': defaultLutealLength,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
+    };
   }
 
   static DateTime? _parseDateTime(Object? value) {

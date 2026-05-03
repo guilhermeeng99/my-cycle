@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mycycle/core/clock/clock.dart';
 import 'package:mycycle/core/entities/couple.dart';
 import 'package:mycycle/core/errors/result.dart';
+import 'package:mycycle/core/hive/hive_doc_cache.dart';
 import 'package:mycycle/features/pairing/data/datasources/couple_remote_datasource.dart';
 import 'package:mycycle/features/pairing/data/models/couple_model.dart';
 import 'package:mycycle/features/pairing/domain/entities/invite_code.dart';
@@ -15,20 +16,26 @@ class CoupleRepositoryImpl implements CoupleRepository {
   CoupleRepositoryImpl({
     required CoupleRemoteDataSource remote,
     required Clock clock,
+    HiveDocCache<Couple>? coupleCache,
   })  : _remote = remote,
-        _clock = clock;
+        _clock = clock,
+        _cache = coupleCache;
 
   final CoupleRemoteDataSource _remote;
   final Clock _clock;
+  final HiveDocCache<Couple>? _cache;
 
   static const Duration _inviteTtl = Duration(hours: 24);
 
   @override
   Stream<Couple?> watchCouple(String coupleId) {
-    return _remote.watchCouple(coupleId).map((data) {
+    final remote = _remote.watchCouple(coupleId).map<Couple?>((data) {
       if (data == null) return null;
       return CoupleModel.fromMap(data, coupleId);
     });
+    final cache = _cache;
+    if (cache == null) return remote;
+    return cache.merge(key: coupleId, remote: remote);
   }
 
   @override
@@ -95,6 +102,7 @@ class CoupleRepositoryImpl implements CoupleRepository {
         userId: userId,
         updatedAt: _clock.now(),
       );
+      await _cache?.delete(coupleId);
       return const Ok<void>(null);
     } on FirebaseException catch (e, stack) {
       debugPrint('leaveCouple failed: [${e.code}] ${e.message}\n$stack');

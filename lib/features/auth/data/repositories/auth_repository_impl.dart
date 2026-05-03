@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mycycle/core/clock/clock.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/core/errors/result.dart';
+import 'package:mycycle/core/hive/hive_doc_cache.dart';
 import 'package:mycycle/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:mycycle/features/auth/data/models/user_model.dart';
 import 'package:mycycle/features/auth/domain/auth_state.dart';
@@ -16,11 +17,17 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required AuthRemoteDataSource remote,
     required Clock clock,
+    HiveDocCache<User>? userCache,
+    Future<void> Function()? onSignOut,
   })  : _remote = remote,
-        _clock = clock;
+        _clock = clock,
+        _userCache = userCache,
+        _onSignOut = onSignOut;
 
   final AuthRemoteDataSource _remote;
   final Clock _clock;
+  final HiveDocCache<User>? _userCache;
+  final Future<void> Function()? _onSignOut;
 
   /// Reactive auth + profile state.
   ///
@@ -37,6 +44,7 @@ class AuthRepositoryImpl implements AuthRepository {
     StreamSubscription<AuthAccount?>? accountSub;
     StreamSubscription<Map<String, dynamic>?>? userDataSub;
     final controller = StreamController<AuthState>();
+    var emittedFromCache = false;
 
     controller
       ..onListen = () {
@@ -46,13 +54,24 @@ class AuthRepositoryImpl implements AuthRepository {
           userDataSub = null;
 
           if (account == null) {
+            emittedFromCache = false;
             controller.add(const AuthStateUnauthenticated());
             return;
           }
 
+          // Fast paint: yield the cached user before Firestore replies.
+          // Firebase auth itself is already cached on disk by the SDK, so
+          // the only network step left is reading users/{uid}.
+          final cached = _userCache?.read(account.uid);
+          if (cached != null && !emittedFromCache) {
+            emittedFromCache = true;
+            controller.add(AuthStateAuthenticated(cached));
+          }
+
           userDataSub = _remote.watchUserData(account.uid).listen((docData) {
-            controller
-                .add(AuthStateAuthenticated(_buildUser(account, docData)));
+            final user = _buildUser(account, docData);
+            unawaited(_userCache?.write(account.uid, user));
+            controller.add(AuthStateAuthenticated(user));
           });
         });
       }
@@ -89,6 +108,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<void>> signOut() async {
     try {
       await _remote.signOut();
+      // Wipe every cache so the next user (or this user signing back in)
+      // doesn't see the previous session's state on the splash. The hook
+      // is wired by the DI container — callers don't need to remember.
+      if (_onSignOut != null) await _onSignOut();
       return const Ok<void>(null);
     } on Object catch (e) {
       return Err<void>(UnknownAuthFailure(e));

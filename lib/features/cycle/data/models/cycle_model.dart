@@ -18,6 +18,31 @@ class CycleModel extends Cycle {
     super.predictionConfidence,
   });
 
+  /// Hive cache representation: every date is millis-since-epoch instead
+  /// of either an ISO string or a Firestore [Timestamp] so the value is
+  /// `jsonEncode`-safe.
+  factory CycleModel.fromCacheJson(Map<String, dynamic> json) {
+    DateTime? millisToDate(Object? v) => v is int
+        ? DateTime.fromMillisecondsSinceEpoch(v, isUtc: true)
+        : null;
+    return CycleModel(
+      id: json['id'] as String,
+      coupleId: json['coupleId'] as String,
+      startDate: millisToDate(json['startDate']) ?? DateTime.now(),
+      periodEndDate: millisToDate(json['periodEndDate']),
+      totalLengthDays: json['totalLengthDays'] as int?,
+      predictedNextStart: millisToDate(json['predictedNextStart']),
+      predictedNextStartRangeEnd:
+          millisToDate(json['predictedNextStartRangeEnd']),
+      predictedOvulation: millisToDate(json['predictedOvulation']),
+      predictionConfidence: _parseConfidence(
+        json['predictionConfidence'] as String?,
+      ),
+      createdAt: millisToDate(json['createdAt']) ?? DateTime.now(),
+      updatedAt: millisToDate(json['updatedAt']) ?? DateTime.now(),
+    );
+  }
+
   factory CycleModel.fromMap(
     Map<String, dynamic> data, {
     required String id,

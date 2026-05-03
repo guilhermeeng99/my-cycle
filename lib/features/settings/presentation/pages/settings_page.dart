@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:mycycle/app/di/injection_container.dart';
+import 'package:mycycle/app/theme/theme_cubit.dart';
+import 'package:mycycle/core/entities/couple.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/core/errors/result.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
+import 'package:mycycle/features/biometric/domain/repositories/biometric_repository.dart';
 import 'package:mycycle/features/pairing/domain/entities/invite_code.dart';
 import 'package:mycycle/features/settings/presentation/cubits/settings_cubit.dart';
 import 'package:mycycle/gen/i18n/strings.g.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -55,11 +61,202 @@ class _LoadedBody extends StatelessWidget {
         _SectionTitle(t.settings.notifications),
         _NotificationsToggle(enabled: state.user.notificationsEnabled),
         const SizedBox(height: BloomSpacing.sectionGap),
+        _SectionTitle(t.settings.appearance),
+        const _AppearanceRadio(),
+        const SizedBox(height: BloomSpacing.sectionGap),
+        if (state.user.role == UserRole.owner && state.couple != null) ...[
+          _SectionTitle(t.cycleDefaults.title),
+          _CycleDefaultsSection(couple: state.couple!),
+          const SizedBox(height: BloomSpacing.sectionGap),
+        ],
         _SectionTitle(t.settings.couple),
         _CoupleSection(state: state),
         const SizedBox(height: BloomSpacing.sectionGap),
+        _BiometricToggle(enabled: state.user.biometricEnabled),
+        const SizedBox(height: BloomSpacing.sectionGap),
         _SectionTitle(t.settings.session),
         _SignOutButton(isSigningOut: state.isSigningOut),
+        const SizedBox(height: BloomSpacing.sectionGap),
+        _SectionTitle(t.about.title),
+        const _AboutSection(),
+      ],
+    );
+  }
+}
+
+class _CycleDefaultsSection extends StatefulWidget {
+  const _CycleDefaultsSection({required this.couple});
+  final Couple couple;
+
+  @override
+  State<_CycleDefaultsSection> createState() => _CycleDefaultsSectionState();
+}
+
+class _CycleDefaultsSectionState extends State<_CycleDefaultsSection> {
+  late int _cycleLength = widget.couple.defaultCycleLength;
+  late int _lutealLength = widget.couple.defaultLutealLength;
+
+  @override
+  void didUpdateWidget(_CycleDefaultsSection old) {
+    super.didUpdateWidget(old);
+    if (old.couple.defaultCycleLength != widget.couple.defaultCycleLength) {
+      _cycleLength = widget.couple.defaultCycleLength;
+    }
+    if (old.couple.defaultLutealLength != widget.couple.defaultLutealLength) {
+      _lutealLength = widget.couple.defaultLutealLength;
+    }
+  }
+
+  Future<void> _commit({int? cycle, int? luteal}) async {
+    final cubit = context.read<SettingsCubit>();
+    final messenger = ScaffoldMessenger.of(context);
+    final errorText = context.t.cycleDefaults.saveError;
+    final result = await cubit.updateCycleDefaults(
+      defaultCycleLength: cycle,
+      defaultLutealLength: luteal,
+    );
+    if (result is Err) {
+      messenger.showSnackBar(SnackBar(content: Text(errorText)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          t.cycleDefaults.cycleLengthLabel,
+          style: theme.textTheme.bodyLarge,
+        ),
+        const SizedBox(height: BloomSpacing.s4),
+        Text(
+          t.cycleDefaults.cycleLengthHint,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Slider(
+          min: 21,
+          max: 45,
+          divisions: 24,
+          value: _cycleLength.toDouble(),
+          label: t.cycleDefaults.daysCount(n: _cycleLength.toString()),
+          onChanged: (v) => setState(() => _cycleLength = v.round()),
+          onChangeEnd: (v) => _commit(cycle: v.round()),
+        ),
+        const SizedBox(height: BloomSpacing.s8),
+        Text(
+          t.cycleDefaults.lutealLengthLabel,
+          style: theme.textTheme.bodyLarge,
+        ),
+        const SizedBox(height: BloomSpacing.s4),
+        Text(
+          t.cycleDefaults.lutealLengthHint,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Slider(
+          min: 10,
+          max: 16,
+          divisions: 6,
+          value: _lutealLength.toDouble(),
+          label: t.cycleDefaults.daysCount(n: _lutealLength.toString()),
+          onChanged: (v) => setState(() => _lutealLength = v.round()),
+          onChangeEnd: (v) => _commit(luteal: v.round()),
+        ),
+      ],
+    );
+  }
+}
+
+class _BiometricToggle extends StatefulWidget {
+  const _BiometricToggle({required this.enabled});
+  final bool enabled;
+
+  @override
+  State<_BiometricToggle> createState() => _BiometricToggleState();
+}
+
+class _BiometricToggleState extends State<_BiometricToggle> {
+  bool? _available;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_checkAvailability());
+  }
+
+  Future<void> _checkAvailability() async {
+    final available = await getIt<BiometricRepository>().isAvailable();
+    if (!mounted) return;
+    setState(() => _available = available);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_available == false) return const SizedBox.shrink();
+    final t = context.t;
+    return SwitchListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(t.biometric.lockedTitle),
+      subtitle: Text(t.biometric.lockedBody),
+      value: widget.enabled,
+      onChanged: (v) async {
+        await context
+            .read<SettingsCubit>()
+            .setBiometricEnabled(enabled: v);
+      },
+    );
+  }
+}
+
+class _AboutSection extends StatefulWidget {
+  const _AboutSection();
+
+  @override
+  State<_AboutSection> createState() => _AboutSectionState();
+}
+
+class _AboutSectionState extends State<_AboutSection> {
+  String? _version;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_loadVersion());
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    setState(() => _version = '${info.version}+${info.buildNumber}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(t.about.version),
+          trailing: Text(_version ?? '—'),
+        ),
+        const SizedBox(height: BloomSpacing.s8),
+        Text(t.about.privacyHeading, style: theme.textTheme.titleSmall),
+        const SizedBox(height: BloomSpacing.s8),
+        Text(
+          t.about.privacyBody,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }
@@ -123,6 +320,43 @@ class _LanguageRadio extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AppearanceRadio extends StatelessWidget {
+  const _AppearanceRadio();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, mode) {
+        return RadioGroup<ThemeMode>(
+          groupValue: mode,
+          onChanged: (v) =>
+              v == null ? null : context.read<ThemeCubit>().setThemeMode(v),
+          child: Column(
+            children: <Widget>[
+              RadioListTile<ThemeMode>(
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.settings.themeSystem),
+                value: ThemeMode.system,
+              ),
+              RadioListTile<ThemeMode>(
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.settings.themeLight),
+                value: ThemeMode.light,
+              ),
+              RadioListTile<ThemeMode>(
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.settings.themeDark),
+                value: ThemeMode.dark,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

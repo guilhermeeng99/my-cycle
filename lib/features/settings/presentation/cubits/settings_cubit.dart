@@ -171,6 +171,47 @@ class SettingsCubit extends Cubit<SettingsState> {
     return result;
   }
 
+  Future<Result<void>> setBiometricEnabled({required bool enabled}) async {
+    final s = state;
+    if (s is! SettingsLoaded) return const Ok<void>(null);
+    final result = await _settingsRepo.updateBiometricEnabled(
+      userId: s.user.id,
+      enabled: enabled,
+    );
+    if (result is Ok<void>) {
+      emit(s.copyWith(user: s.user.copyWith(biometricEnabled: enabled)));
+    }
+    return result;
+  }
+
+  /// Updates the couple's default cycle/luteal length. Owner-only — UI
+  /// must hide the controls when the user has [UserRole.partner].
+  Future<Result<void>> updateCycleDefaults({
+    int? defaultCycleLength,
+    int? defaultLutealLength,
+  }) async {
+    final s = state;
+    if (s is! SettingsLoaded || s.couple == null) return const Ok<void>(null);
+    final result = await _settingsRepo.updateCycleDefaults(
+      coupleId: s.couple!.id,
+      defaultCycleLength: defaultCycleLength,
+      defaultLutealLength: defaultLutealLength,
+    );
+    if (result is Ok<void>) {
+      emit(
+        s.copyWith(
+          couple: s.couple!.copyWith(
+            defaultCycleLength:
+                defaultCycleLength ?? s.couple!.defaultCycleLength,
+            defaultLutealLength:
+                defaultLutealLength ?? s.couple!.defaultLutealLength,
+          ),
+        ),
+      );
+    }
+    return result;
+  }
+
   Future<Result<void>> signOut() async {
     final s = state;
     if (s is! SettingsLoaded) return const Ok<void>(null);

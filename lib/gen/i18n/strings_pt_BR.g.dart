@@ -46,6 +46,11 @@ class TranslationsPtBr with BaseTranslations<AppLocale, Translations> implements
 	@override late final _TranslationsTodayPtBr today = _TranslationsTodayPtBr._(_root);
 	@override late final _TranslationsLogPtBr log = _TranslationsLogPtBr._(_root);
 	@override late final _TranslationsCalendarPtBr calendar = _TranslationsCalendarPtBr._(_root);
+	@override late final _TranslationsNavPtBr nav = _TranslationsNavPtBr._(_root);
+	@override late final _TranslationsInsightsPtBr insights = _TranslationsInsightsPtBr._(_root);
+	@override late final _TranslationsBiometricPtBr biometric = _TranslationsBiometricPtBr._(_root);
+	@override late final _TranslationsAboutPtBr about = _TranslationsAboutPtBr._(_root);
+	@override late final _TranslationsCycleDefaultsPtBr cycleDefaults = _TranslationsCycleDefaultsPtBr._(_root);
 	@override late final _TranslationsSettingsPtBr settings = _TranslationsSettingsPtBr._(_root);
 	@override late final _TranslationsPlaceholderPtBr placeholder = _TranslationsPlaceholderPtBr._(_root);
 }
@@ -214,6 +219,94 @@ class _TranslationsCalendarPtBr implements TranslationsCalendarEn {
 	@override String get errorGeneric => 'Algo deu errado ao carregar o calendário.';
 }
 
+// Path: nav
+class _TranslationsNavPtBr implements TranslationsNavEn {
+	_TranslationsNavPtBr._(this._root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get today => 'Hoje';
+	@override String get calendar => 'Calendário';
+	@override String get insights => 'Insights';
+	@override String get settings => 'Configurações';
+}
+
+// Path: insights
+class _TranslationsInsightsPtBr implements TranslationsInsightsEn {
+	_TranslationsInsightsPtBr._(this._root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Insights';
+	@override String get emptyTitle => 'Ainda não tem dados suficientes';
+	@override String get emptyBody => 'Registre alguns ciclos e os padrões aparecerão aqui — médias, regularidade e uma próxima previsão com nível de confiança.';
+	@override String get averagesTitle => 'Suas médias';
+	@override String get averageCycle => 'Ciclo';
+	@override String get averagePeriod => 'Menstruação';
+	@override String get regularityTitle => 'Regularidade';
+	@override String get regularityHigh => 'Muito estável';
+	@override String get regularityMedium => 'Bem estável';
+	@override String get regularityLow => 'Bastante variável';
+	@override String regularityHint({required Object n}) => 'Baseado nos últimos ${n} ciclos fechados.';
+	@override String get nextPredictionTitle => 'Próxima previsão';
+	@override String nextPredictionBody({required Object from, required Object to}) => '${from} — ${to}';
+	@override String ovulationLabel({required Object date}) => 'Ovulação por volta de ${date}';
+	@override String get confidenceLow => 'Confiança baixa';
+	@override String get confidenceMedium => 'Confiança média';
+	@override String get confidenceHigh => 'Confiança alta';
+	@override String sampleSize({required Object n}) => '${n} ciclos registrados';
+	@override String daysShort({required Object n}) => '${n} d';
+}
+
+// Path: biometric
+class _TranslationsBiometricPtBr implements TranslationsBiometricEn {
+	_TranslationsBiometricPtBr._(this._root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lockedTitle => 'MyCycle está bloqueado';
+	@override String get lockedBody => 'Use Face ID ou sua digital pra desbloquear.';
+	@override String get unlockButton => 'Desbloquear';
+	@override String get unlockReason => 'Desbloquear MyCycle';
+	@override String failedAttempts({required Object n}) => '${n} tentativas restantes';
+	@override String get forcedSignOutTitle => 'Tentativas demais';
+	@override String get forcedSignOutBody => 'Por segurança, te desconectei. Entre de novo pra continuar.';
+	@override String get unavailable => 'Desbloqueio biométrico não está disponível neste aparelho.';
+}
+
+// Path: about
+class _TranslationsAboutPtBr implements TranslationsAboutEn {
+	_TranslationsAboutPtBr._(this._root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Sobre';
+	@override String get version => 'Versão';
+	@override String get privacyHeading => 'Privacidade';
+	@override String get privacyBody => 'O MyCycle guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.';
+	@override String get openSource => 'Código aberto';
+}
+
+// Path: cycleDefaults
+class _TranslationsCycleDefaultsPtBr implements TranslationsCycleDefaultsEn {
+	_TranslationsCycleDefaultsPtBr._(this._root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Ciclo';
+	@override String get cycleLengthLabel => 'Duração média do ciclo';
+	@override String get cycleLengthHint => 'Do dia 1 de uma menstruação ao dia 1 da próxima.';
+	@override String get lutealLengthLabel => 'Tempo entre ovulação e menstruação';
+	@override String get lutealLengthHint => 'A maioria fica entre 12 e 14 dias.';
+	@override String daysCount({required Object n}) => '${n} dias';
+	@override String get saveError => 'Não consegui atualizar. Tenta de novo.';
+}
+
 // Path: settings
 class _TranslationsSettingsPtBr implements TranslationsSettingsEn {
 	_TranslationsSettingsPtBr._(this._root);
@@ -248,6 +341,10 @@ class _TranslationsSettingsPtBr implements TranslationsSettingsEn {
 	@override String get notificationsTitle => 'Lembretes de menstruação';
 	@override String get notificationsBody => 'Vou te lembrar discretamente um dia antes da provável chegada.';
 	@override String get notificationsError => 'Não consegui atualizar as notificações. Tenta de novo.';
+	@override String get appearance => 'Aparência';
+	@override String get themeSystem => 'Igual ao sistema';
+	@override String get themeLight => 'Claro';
+	@override String get themeDark => 'Escuro';
 }
 
 // Path: placeholder
@@ -363,6 +460,49 @@ extension on TranslationsPtBr {
 			'calendar.nextMonth' => 'Próximo mês',
 			'calendar.todayPill' => 'Hoje',
 			'calendar.errorGeneric' => 'Algo deu errado ao carregar o calendário.',
+			'nav.today' => 'Hoje',
+			'nav.calendar' => 'Calendário',
+			'nav.insights' => 'Insights',
+			'nav.settings' => 'Configurações',
+			'insights.title' => 'Insights',
+			'insights.emptyTitle' => 'Ainda não tem dados suficientes',
+			'insights.emptyBody' => 'Registre alguns ciclos e os padrões aparecerão aqui — médias, regularidade e uma próxima previsão com nível de confiança.',
+			'insights.averagesTitle' => 'Suas médias',
+			'insights.averageCycle' => 'Ciclo',
+			'insights.averagePeriod' => 'Menstruação',
+			'insights.regularityTitle' => 'Regularidade',
+			'insights.regularityHigh' => 'Muito estável',
+			'insights.regularityMedium' => 'Bem estável',
+			'insights.regularityLow' => 'Bastante variável',
+			'insights.regularityHint' => ({required Object n}) => 'Baseado nos últimos ${n} ciclos fechados.',
+			'insights.nextPredictionTitle' => 'Próxima previsão',
+			'insights.nextPredictionBody' => ({required Object from, required Object to}) => '${from} — ${to}',
+			'insights.ovulationLabel' => ({required Object date}) => 'Ovulação por volta de ${date}',
+			'insights.confidenceLow' => 'Confiança baixa',
+			'insights.confidenceMedium' => 'Confiança média',
+			'insights.confidenceHigh' => 'Confiança alta',
+			'insights.sampleSize' => ({required Object n}) => '${n} ciclos registrados',
+			'insights.daysShort' => ({required Object n}) => '${n} d',
+			'biometric.lockedTitle' => 'MyCycle está bloqueado',
+			'biometric.lockedBody' => 'Use Face ID ou sua digital pra desbloquear.',
+			'biometric.unlockButton' => 'Desbloquear',
+			'biometric.unlockReason' => 'Desbloquear MyCycle',
+			'biometric.failedAttempts' => ({required Object n}) => '${n} tentativas restantes',
+			'biometric.forcedSignOutTitle' => 'Tentativas demais',
+			'biometric.forcedSignOutBody' => 'Por segurança, te desconectei. Entre de novo pra continuar.',
+			'biometric.unavailable' => 'Desbloqueio biométrico não está disponível neste aparelho.',
+			'about.title' => 'Sobre',
+			'about.version' => 'Versão',
+			'about.privacyHeading' => 'Privacidade',
+			'about.privacyBody' => 'O MyCycle guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.',
+			'about.openSource' => 'Código aberto',
+			'cycleDefaults.title' => 'Ciclo',
+			'cycleDefaults.cycleLengthLabel' => 'Duração média do ciclo',
+			'cycleDefaults.cycleLengthHint' => 'Do dia 1 de uma menstruação ao dia 1 da próxima.',
+			'cycleDefaults.lutealLengthLabel' => 'Tempo entre ovulação e menstruação',
+			'cycleDefaults.lutealLengthHint' => 'A maioria fica entre 12 e 14 dias.',
+			'cycleDefaults.daysCount' => ({required Object n}) => '${n} dias',
+			'cycleDefaults.saveError' => 'Não consegui atualizar. Tenta de novo.',
 			'settings.title' => 'Configurações',
 			'settings.account' => 'Conta',
 			'settings.language' => 'Idioma',
@@ -390,6 +530,10 @@ extension on TranslationsPtBr {
 			'settings.notificationsTitle' => 'Lembretes de menstruação',
 			'settings.notificationsBody' => 'Vou te lembrar discretamente um dia antes da provável chegada.',
 			'settings.notificationsError' => 'Não consegui atualizar as notificações. Tenta de novo.',
+			'settings.appearance' => 'Aparência',
+			'settings.themeSystem' => 'Igual ao sistema',
+			'settings.themeLight' => 'Claro',
+			'settings.themeDark' => 'Escuro',
 			'placeholder.themeAlive' => 'Tema Bloom está vivo.',
 			'placeholder.signedInAs' => ({required Object name}) => 'Olá, ${name}',
 			'placeholder.nextStep' => 'Próximo passo: onboarding.',

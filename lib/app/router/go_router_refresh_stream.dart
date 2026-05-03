@@ -2,23 +2,29 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-/// Bridges a [Stream] to a [Listenable] for `go_router`'s `refreshListenable`.
+/// Bridges one or more [Stream]s to a [Listenable] for `go_router`'s
+/// `refreshListenable`.
 ///
-/// Notifies listeners on every event (and once on construction) so the router
-/// re-evaluates its redirect whenever auth state changes.
+/// Notifies listeners on every event from any source stream (and once on
+/// construction) so the router re-evaluates its redirect whenever any of
+/// the wired-up cubits/blocs emit.
 class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
+  GoRouterRefreshStream(Stream<Object?> stream) : this.fromStreams([stream]);
+
+  GoRouterRefreshStream.fromStreams(List<Stream<Object?>> streams) {
     notifyListeners();
-    _subscription = stream.asBroadcastStream().listen(
-          (dynamic _) => notifyListeners(),
-        );
+    _subscriptions = streams
+        .map((s) => s.asBroadcastStream().listen((_) => notifyListeners()))
+        .toList(growable: false);
   }
 
-  late final StreamSubscription<dynamic> _subscription;
+  late final List<StreamSubscription<Object?>> _subscriptions;
 
   @override
   void dispose() {
-    unawaited(_subscription.cancel());
+    for (final sub in _subscriptions) {
+      unawaited(sub.cancel());
+    }
     super.dispose();
   }
 }

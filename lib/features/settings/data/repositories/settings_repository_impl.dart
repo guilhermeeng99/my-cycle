@@ -41,6 +41,46 @@ class SettingsRepositoryImpl implements SettingsRepository {
     );
   }
 
+  @override
+  Future<Result<void>> updateBiometricEnabled({
+    required String userId,
+    required bool enabled,
+  }) {
+    return _updateUserField(
+      userId: userId,
+      field: 'biometricEnabled',
+      value: enabled,
+    );
+  }
+
+  @override
+  Future<Result<void>> updateCycleDefaults({
+    required String coupleId,
+    int? defaultCycleLength,
+    int? defaultLutealLength,
+  }) async {
+    if (defaultCycleLength == null && defaultLutealLength == null) {
+      return const Ok<void>(null);
+    }
+    final patch = <String, dynamic>{
+      'defaultCycleLength': ?defaultCycleLength,
+      'defaultLutealLength': ?defaultLutealLength,
+      'updatedAt': Timestamp.fromDate(_clock.now()),
+    };
+    try {
+      await _firestore.collection('couples').doc(coupleId).update(patch);
+      return const Ok<void>(null);
+    } on FirebaseException catch (e, stack) {
+      debugPrint(
+        'Cycle defaults update failed: [${e.code}] ${e.message}\n$stack',
+      );
+      return Err<void>(_SettingsStorageFailure(e.code));
+    } on Object catch (e, stack) {
+      debugPrint('Cycle defaults update unexpected: $e\n$stack');
+      return Err<void>(_SettingsStorageFailure(e.toString()));
+    }
+  }
+
   Future<Result<void>> _updateUserField({
     required String userId,
     required String field,
@@ -64,9 +104,6 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 }
 
-/// Internal failure for settings writes — we don't yet have a sealed
-/// `SettingsFailure`; surfacing as a generic `AppFailure` keeps the call site
-/// simple while we ship Settings v1.
 class _SettingsStorageFailure extends AppFailure {
   const _SettingsStorageFailure(this.code);
   final String code;

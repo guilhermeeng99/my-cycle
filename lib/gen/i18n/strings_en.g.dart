@@ -52,6 +52,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsTodayEn today = TranslationsTodayEn._(_root);
 	late final TranslationsLogEn log = TranslationsLogEn._(_root);
 	late final TranslationsCalendarEn calendar = TranslationsCalendarEn._(_root);
+	late final TranslationsNavEn nav = TranslationsNavEn._(_root);
+	late final TranslationsInsightsEn insights = TranslationsInsightsEn._(_root);
+	late final TranslationsBiometricEn biometric = TranslationsBiometricEn._(_root);
+	late final TranslationsAboutEn about = TranslationsAboutEn._(_root);
+	late final TranslationsCycleDefaultsEn cycleDefaults = TranslationsCycleDefaultsEn._(_root);
 	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
 	late final TranslationsPlaceholderEn placeholder = TranslationsPlaceholderEn._(_root);
 }
@@ -404,6 +409,180 @@ class TranslationsCalendarEn {
 	String get errorGeneric => 'Something went wrong loading the calendar.';
 }
 
+// Path: nav
+class TranslationsNavEn {
+	TranslationsNavEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Calendar'
+	String get calendar => 'Calendar';
+
+	/// en: 'Insights'
+	String get insights => 'Insights';
+
+	/// en: 'Settings'
+	String get settings => 'Settings';
+}
+
+// Path: insights
+class TranslationsInsightsEn {
+	TranslationsInsightsEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Insights'
+	String get title => 'Insights';
+
+	/// en: 'Not enough data yet'
+	String get emptyTitle => 'Not enough data yet';
+
+	/// en: 'Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.'
+	String get emptyBody => 'Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.';
+
+	/// en: 'Your averages'
+	String get averagesTitle => 'Your averages';
+
+	/// en: 'Cycle'
+	String get averageCycle => 'Cycle';
+
+	/// en: 'Period'
+	String get averagePeriod => 'Period';
+
+	/// en: 'Regularity'
+	String get regularityTitle => 'Regularity';
+
+	/// en: 'Very steady'
+	String get regularityHigh => 'Very steady';
+
+	/// en: 'Mostly steady'
+	String get regularityMedium => 'Mostly steady';
+
+	/// en: 'Quite variable'
+	String get regularityLow => 'Quite variable';
+
+	/// en: 'Based on the last $n closed cycles.'
+	String regularityHint({required Object n}) => 'Based on the last ${n} closed cycles.';
+
+	/// en: 'Next prediction'
+	String get nextPredictionTitle => 'Next prediction';
+
+	/// en: '$from — $to'
+	String nextPredictionBody({required Object from, required Object to}) => '${from} — ${to}';
+
+	/// en: 'Ovulation around $date'
+	String ovulationLabel({required Object date}) => 'Ovulation around ${date}';
+
+	/// en: 'Low confidence'
+	String get confidenceLow => 'Low confidence';
+
+	/// en: 'Medium confidence'
+	String get confidenceMedium => 'Medium confidence';
+
+	/// en: 'High confidence'
+	String get confidenceHigh => 'High confidence';
+
+	/// en: '$n cycles tracked'
+	String sampleSize({required Object n}) => '${n} cycles tracked';
+
+	/// en: '$n d'
+	String daysShort({required Object n}) => '${n} d';
+}
+
+// Path: biometric
+class TranslationsBiometricEn {
+	TranslationsBiometricEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'MyCycle is locked'
+	String get lockedTitle => 'MyCycle is locked';
+
+	/// en: 'Use Face ID or your fingerprint to unlock.'
+	String get lockedBody => 'Use Face ID or your fingerprint to unlock.';
+
+	/// en: 'Unlock'
+	String get unlockButton => 'Unlock';
+
+	/// en: 'Unlock MyCycle'
+	String get unlockReason => 'Unlock MyCycle';
+
+	/// en: '$n attempts left'
+	String failedAttempts({required Object n}) => '${n} attempts left';
+
+	/// en: 'Too many attempts'
+	String get forcedSignOutTitle => 'Too many attempts';
+
+	/// en: 'For your safety we signed you out. Sign in again to continue.'
+	String get forcedSignOutBody => 'For your safety we signed you out. Sign in again to continue.';
+
+	/// en: 'Biometric unlock isn't available on this device.'
+	String get unavailable => 'Biometric unlock isn\'t available on this device.';
+}
+
+// Path: about
+class TranslationsAboutEn {
+	TranslationsAboutEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'About'
+	String get title => 'About';
+
+	/// en: 'Version'
+	String get version => 'Version';
+
+	/// en: 'Privacy'
+	String get privacyHeading => 'Privacy';
+
+	/// en: 'MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.'
+	String get privacyBody => 'MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.';
+
+	/// en: 'Open source'
+	String get openSource => 'Open source';
+}
+
+// Path: cycleDefaults
+class TranslationsCycleDefaultsEn {
+	TranslationsCycleDefaultsEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Cycle'
+	String get title => 'Cycle';
+
+	/// en: 'Average cycle length'
+	String get cycleLengthLabel => 'Average cycle length';
+
+	/// en: 'From day 1 of one period to day 1 of the next.'
+	String get cycleLengthHint => 'From day 1 of one period to day 1 of the next.';
+
+	/// en: 'Time between ovulation and period'
+	String get lutealLengthLabel => 'Time between ovulation and period';
+
+	/// en: 'Most people sit between 12 and 14 days.'
+	String get lutealLengthHint => 'Most people sit between 12 and 14 days.';
+
+	/// en: '$n days'
+	String daysCount({required Object n}) => '${n} days';
+
+	/// en: 'Couldn't update. Try again.'
+	String get saveError => 'Couldn\'t update. Try again.';
+}
+
 // Path: settings
 class TranslationsSettingsEn {
 	TranslationsSettingsEn._(this._root);
@@ -492,6 +671,18 @@ class TranslationsSettingsEn {
 
 	/// en: 'Couldn't update notifications. Try again.'
 	String get notificationsError => 'Couldn\'t update notifications. Try again.';
+
+	/// en: 'Appearance'
+	String get appearance => 'Appearance';
+
+	/// en: 'Match system'
+	String get themeSystem => 'Match system';
+
+	/// en: 'Light'
+	String get themeLight => 'Light';
+
+	/// en: 'Dark'
+	String get themeDark => 'Dark';
 }
 
 // Path: placeholder
@@ -613,6 +804,49 @@ extension on Translations {
 			'calendar.nextMonth' => 'Next month',
 			'calendar.todayPill' => 'Today',
 			'calendar.errorGeneric' => 'Something went wrong loading the calendar.',
+			'nav.today' => 'Today',
+			'nav.calendar' => 'Calendar',
+			'nav.insights' => 'Insights',
+			'nav.settings' => 'Settings',
+			'insights.title' => 'Insights',
+			'insights.emptyTitle' => 'Not enough data yet',
+			'insights.emptyBody' => 'Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.',
+			'insights.averagesTitle' => 'Your averages',
+			'insights.averageCycle' => 'Cycle',
+			'insights.averagePeriod' => 'Period',
+			'insights.regularityTitle' => 'Regularity',
+			'insights.regularityHigh' => 'Very steady',
+			'insights.regularityMedium' => 'Mostly steady',
+			'insights.regularityLow' => 'Quite variable',
+			'insights.regularityHint' => ({required Object n}) => 'Based on the last ${n} closed cycles.',
+			'insights.nextPredictionTitle' => 'Next prediction',
+			'insights.nextPredictionBody' => ({required Object from, required Object to}) => '${from} — ${to}',
+			'insights.ovulationLabel' => ({required Object date}) => 'Ovulation around ${date}',
+			'insights.confidenceLow' => 'Low confidence',
+			'insights.confidenceMedium' => 'Medium confidence',
+			'insights.confidenceHigh' => 'High confidence',
+			'insights.sampleSize' => ({required Object n}) => '${n} cycles tracked',
+			'insights.daysShort' => ({required Object n}) => '${n} d',
+			'biometric.lockedTitle' => 'MyCycle is locked',
+			'biometric.lockedBody' => 'Use Face ID or your fingerprint to unlock.',
+			'biometric.unlockButton' => 'Unlock',
+			'biometric.unlockReason' => 'Unlock MyCycle',
+			'biometric.failedAttempts' => ({required Object n}) => '${n} attempts left',
+			'biometric.forcedSignOutTitle' => 'Too many attempts',
+			'biometric.forcedSignOutBody' => 'For your safety we signed you out. Sign in again to continue.',
+			'biometric.unavailable' => 'Biometric unlock isn\'t available on this device.',
+			'about.title' => 'About',
+			'about.version' => 'Version',
+			'about.privacyHeading' => 'Privacy',
+			'about.privacyBody' => 'MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.',
+			'about.openSource' => 'Open source',
+			'cycleDefaults.title' => 'Cycle',
+			'cycleDefaults.cycleLengthLabel' => 'Average cycle length',
+			'cycleDefaults.cycleLengthHint' => 'From day 1 of one period to day 1 of the next.',
+			'cycleDefaults.lutealLengthLabel' => 'Time between ovulation and period',
+			'cycleDefaults.lutealLengthHint' => 'Most people sit between 12 and 14 days.',
+			'cycleDefaults.daysCount' => ({required Object n}) => '${n} days',
+			'cycleDefaults.saveError' => 'Couldn\'t update. Try again.',
 			'settings.title' => 'Settings',
 			'settings.account' => 'Account',
 			'settings.language' => 'Language',
@@ -640,6 +874,10 @@ extension on Translations {
 			'settings.notificationsTitle' => 'Period reminders',
 			'settings.notificationsBody' => 'We\'ll quietly remind you the day before your period is likely to start.',
 			'settings.notificationsError' => 'Couldn\'t update notifications. Try again.',
+			'settings.appearance' => 'Appearance',
+			'settings.themeSystem' => 'Match system',
+			'settings.themeLight' => 'Light',
+			'settings.themeDark' => 'Dark',
 			'placeholder.themeAlive' => 'Bloom theme is alive.',
 			'placeholder.signedInAs' => ({required Object name}) => 'Hello, ${name}',
 			'placeholder.nextStep' => 'Next step: onboarding.',

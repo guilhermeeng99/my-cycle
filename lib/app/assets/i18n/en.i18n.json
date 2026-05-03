@@ -108,6 +108,59 @@
     "todayPill": "Today",
     "errorGeneric": "Something went wrong loading the calendar."
   },
+  "nav": {
+    "today": "Today",
+    "calendar": "Calendar",
+    "insights": "Insights",
+    "settings": "Settings"
+  },
+  "insights": {
+    "title": "Insights",
+    "emptyTitle": "Not enough data yet",
+    "emptyBody": "Log a few cycles and your patterns will appear here — averages, regularity, and a confidence-aware next prediction.",
+    "averagesTitle": "Your averages",
+    "averageCycle": "Cycle",
+    "averagePeriod": "Period",
+    "regularityTitle": "Regularity",
+    "regularityHigh": "Very steady",
+    "regularityMedium": "Mostly steady",
+    "regularityLow": "Quite variable",
+    "regularityHint": "Based on the last $n closed cycles.",
+    "nextPredictionTitle": "Next prediction",
+    "nextPredictionBody": "$from — $to",
+    "ovulationLabel": "Ovulation around $date",
+    "confidenceLow": "Low confidence",
+    "confidenceMedium": "Medium confidence",
+    "confidenceHigh": "High confidence",
+    "sampleSize": "$n cycles tracked",
+    "daysShort": "$n d"
+  },
+  "biometric": {
+    "lockedTitle": "MyCycle is locked",
+    "lockedBody": "Use Face ID or your fingerprint to unlock.",
+    "unlockButton": "Unlock",
+    "unlockReason": "Unlock MyCycle",
+    "failedAttempts": "$n attempts left",
+    "forcedSignOutTitle": "Too many attempts",
+    "forcedSignOutBody": "For your safety we signed you out. Sign in again to continue.",
+    "unavailable": "Biometric unlock isn't available on this device."
+  },
+  "about": {
+    "title": "About",
+    "version": "Version",
+    "privacyHeading": "Privacy",
+    "privacyBody": "MyCycle stores your cycle data in your own Firebase project. There is no analytics on cycle content. Your partner can read your data; nobody else can.",
+    "openSource": "Open source"
+  },
+  "cycleDefaults": {
+    "title": "Cycle",
+    "cycleLengthLabel": "Average cycle length",
+    "cycleLengthHint": "From day 1 of one period to day 1 of the next.",
+    "lutealLengthLabel": "Time between ovulation and period",
+    "lutealLengthHint": "Most people sit between 12 and 14 days.",
+    "daysCount": "$n days",
+    "saveError": "Couldn't update. Try again."
+  },
   "settings": {
     "title": "Settings",
     "account": "Account",
@@ -135,7 +188,11 @@
     "notifications": "Notifications",
     "notificationsTitle": "Period reminders",
     "notificationsBody": "We'll quietly remind you the day before your period is likely to start.",
-    "notificationsError": "Couldn't update notifications. Try again."
+    "notificationsError": "Couldn't update notifications. Try again.",
+    "appearance": "Appearance",
+    "themeSystem": "Match system",
+    "themeLight": "Light",
+    "themeDark": "Dark"
   },
   "placeholder": {
     "themeAlive": "Bloom theme is alive.",

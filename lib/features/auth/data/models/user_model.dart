@@ -17,6 +17,26 @@ class UserModel extends User {
     super.notificationsEnabled,
   });
 
+  factory UserModel.fromCacheJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] as String,
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      photoUrl: json['photoUrl'] as String?,
+      coupleId: json['coupleId'] as String?,
+      role: _parseRole(json['role'] as String?),
+      language: _parseLanguage(json['language'] as String?),
+      biometricEnabled: json['biometricEnabled'] as bool? ?? false,
+      notificationsEnabled: json['notificationsEnabled'] as bool? ?? false,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        json['createdAt'] as int? ?? 0,
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        json['updatedAt'] as int? ?? 0,
+      ),
+    );
+  }
+
   factory UserModel.fromMap(Map<String, dynamic> data, String id) {
     return UserModel(
       id: id,
@@ -45,6 +65,24 @@ class UserModel extends User {
       'notificationsEnabled': notificationsEnabled,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+    };
+  }
+
+  /// JSON-encodable shape used by the Hive cache. Replaces [Timestamp]
+  /// with millis-since-epoch so it survives `jsonEncode`.
+  Map<String, dynamic> toCacheJson() {
+    return <String, dynamic>{
+      'id': id,
+      'name': name,
+      'email': email,
+      'photoUrl': photoUrl,
+      'coupleId': coupleId,
+      'role': role?.name,
+      'language': language.name,
+      'biometricEnabled': biometricEnabled,
+      'notificationsEnabled': notificationsEnabled,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
     };
   }
 

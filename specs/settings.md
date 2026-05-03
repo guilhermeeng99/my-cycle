@@ -1,6 +1,6 @@
 # Settings — Specification
 
-> Status: draft v1 · Owner: @guiga · Last updated: 2026-05-03
+> Status: draft v3 · Owner: @guiga · Last updated: 2026-05-03
 
 Settings consolidates user preferences and account controls. One screen, sectioned. Different sections for owner vs. partner.
 
@@ -14,48 +14,62 @@ Settings consolidates user preferences and account controls. One screen, section
    - Sign out
    - Delete account (danger)
 
-2. **Couple**
+2. **Appearance**
+   - Theme mode (Match system / Light / Dark — radio)
+   - Persisted via `SharedPreferences` (key `theme_mode`); applies immediately and survives cold start
+   - Owned by [`ThemeCubit`](theme.md), not `SettingsCubit` — it's app-wide UI state, not user-account state
+
+3. **Couple**
    - Partner status: "Paired with [name]" or "Not paired yet"
    - Generate / refresh invite code (if not paired)
    - Show active invite code with countdown to expiry (if applicable)
    - "End couple" (danger — removes partner, dissolves couple)
 
-3. **Cycle**
-   - Default cycle length (slider, 21–45)
-   - Default luteal length (slider, 10–16) — labeled "Time between ovulation and period"
-   - View onboarding info (read-only record of what was entered initially)
+4. **Cycle** *(owner only — partner doesn't see this section)*
+   - Default cycle length: slider 21–45 days, persisted on slider release
+     (`onChangeEnd`) via `SettingsCubit.updateCycleDefaults`. Writes to
+     the couple doc; security rules enforce owner-only.
+   - Default luteal length: slider 10–16 days. Labeled "Time between
+     ovulation and period."
+   - Both writes trigger an automatic prediction recompute the next time
+     the prediction engine runs (the engine reads couple defaults from
+     each `PredictionInput`, so no manual refresh is needed).
 
-4. **Notifications**
+5. **Notifications**
    - Master toggle
    - Individual: "Period likely starting" / "Period ended"
 
-5. **Security**
-   - Biometric lock toggle (Face ID / fingerprint)
+6. **Security**
+   - Biometric lock toggle (Face ID / fingerprint). The toggle is hidden
+     when `BiometricRepository.isAvailable()` returns false. See
+     [biometric.md](biometric.md) for the full state machine.
 
-6. **Data**
+7. **Data**
    - Export my data (JSON file)
    - Delete all my data (danger)
 
-7. **About**
-   - App version
-   - Privacy stance (1-paragraph statement)
-   - Open-source acknowledgments (if relevant)
+8. **About**
+   - App version + build number (from `package_info_plus`)
+   - Privacy stance: one-paragraph statement reaffirming that cycle data
+     stays in the user's Firebase project and that no analytics covers
+     cycle content.
 
 ---
 
 ## Sections (partner)
 
 1. **Account** (same as owner)
-2. **Couple**
+2. **Appearance** (same as owner)
+3. **Couple**
    - Paired with [Owner name]
    - **Leave couple** (danger — sets `partnerId = null`)
-3. **Notifications**
+4. **Notifications**
    - Master toggle (default OFF)
    - "Period likely starting" / "Period ended" — opt-in
-4. **Security** (same as owner)
-5. **Data**
+5. **Security** (same as owner)
+6. **Data**
    - Export my data (only partner notes — owner's data is hers, not exportable from partner side)
-6. **About** (same as owner)
+7. **About** (same as owner)
 
 Partner does NOT see Cycle settings (those affect predictions; only owner controls them).
 
@@ -74,6 +88,7 @@ Partner does NOT see Cycle settings (those affect predictions; only owner contro
 | BR-7 | Cycle length / luteal length changes trigger a prediction recompute on the current cycle. |
 | BR-8 | Biometric toggle is hidden if device doesn't support biometric auth. |
 | BR-9 | All settings writes are optimistic — Hive write applies immediately; Firestore set in background. |
+| BR-10 | Theme mode is local-device state (not synced via Firestore). Stored in `SharedPreferences` so each device keeps its own preference. |
 
 ---
 

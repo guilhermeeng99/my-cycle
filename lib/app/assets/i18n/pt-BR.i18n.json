@@ -108,6 +108,59 @@
     "todayPill": "Hoje",
     "errorGeneric": "Algo deu errado ao carregar o calendário."
   },
+  "nav": {
+    "today": "Hoje",
+    "calendar": "Calendário",
+    "insights": "Insights",
+    "settings": "Configurações"
+  },
+  "insights": {
+    "title": "Insights",
+    "emptyTitle": "Ainda não tem dados suficientes",
+    "emptyBody": "Registre alguns ciclos e os padrões aparecerão aqui — médias, regularidade e uma próxima previsão com nível de confiança.",
+    "averagesTitle": "Suas médias",
+    "averageCycle": "Ciclo",
+    "averagePeriod": "Menstruação",
+    "regularityTitle": "Regularidade",
+    "regularityHigh": "Muito estável",
+    "regularityMedium": "Bem estável",
+    "regularityLow": "Bastante variável",
+    "regularityHint": "Baseado nos últimos $n ciclos fechados.",
+    "nextPredictionTitle": "Próxima previsão",
+    "nextPredictionBody": "$from — $to",
+    "ovulationLabel": "Ovulação por volta de $date",
+    "confidenceLow": "Confiança baixa",
+    "confidenceMedium": "Confiança média",
+    "confidenceHigh": "Confiança alta",
+    "sampleSize": "$n ciclos registrados",
+    "daysShort": "$n d"
+  },
+  "biometric": {
+    "lockedTitle": "MyCycle está bloqueado",
+    "lockedBody": "Use Face ID ou sua digital pra desbloquear.",
+    "unlockButton": "Desbloquear",
+    "unlockReason": "Desbloquear MyCycle",
+    "failedAttempts": "$n tentativas restantes",
+    "forcedSignOutTitle": "Tentativas demais",
+    "forcedSignOutBody": "Por segurança, te desconectei. Entre de novo pra continuar.",
+    "unavailable": "Desbloqueio biométrico não está disponível neste aparelho."
+  },
+  "about": {
+    "title": "Sobre",
+    "version": "Versão",
+    "privacyHeading": "Privacidade",
+    "privacyBody": "O MyCycle guarda seus dados de ciclo no seu próprio projeto Firebase. Não há analytics sobre o conteúdo do ciclo. Sua parceira pode ler seus dados; mais ninguém.",
+    "openSource": "Código aberto"
+  },
+  "cycleDefaults": {
+    "title": "Ciclo",
+    "cycleLengthLabel": "Duração média do ciclo",
+    "cycleLengthHint": "Do dia 1 de uma menstruação ao dia 1 da próxima.",
+    "lutealLengthLabel": "Tempo entre ovulação e menstruação",
+    "lutealLengthHint": "A maioria fica entre 12 e 14 dias.",
+    "daysCount": "$n dias",
+    "saveError": "Não consegui atualizar. Tenta de novo."
+  },
   "settings": {
     "title": "Configurações",
     "account": "Conta",
@@ -135,7 +188,11 @@
     "notifications": "Notificações",
     "notificationsTitle": "Lembretes de menstruação",
     "notificationsBody": "Vou te lembrar discretamente um dia antes da provável chegada.",
-    "notificationsError": "Não consegui atualizar as notificações. Tenta de novo."
+    "notificationsError": "Não consegui atualizar as notificações. Tenta de novo.",
+    "appearance": "Aparência",
+    "themeSystem": "Igual ao sistema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro"
   },
   "placeholder": {
     "themeAlive": "Tema Bloom está vivo.",

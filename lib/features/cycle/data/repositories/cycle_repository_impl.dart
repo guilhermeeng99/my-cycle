@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mycycle/core/clock/clock.dart';
 import 'package:mycycle/core/entities/cycle.dart';
 import 'package:mycycle/core/errors/result.dart';
+import 'package:mycycle/core/hive/hive_doc_cache.dart';
 import 'package:mycycle/core/utils/dates.dart';
 import 'package:mycycle/features/cycle/data/datasources/cycle_remote_datasource.dart';
 import 'package:mycycle/features/cycle/data/models/cycle_model.dart';
@@ -14,11 +15,18 @@ class CycleRepositoryImpl implements CycleRepository {
   CycleRepositoryImpl({
     required CycleRemoteDataSource remote,
     required Clock clock,
+    HiveDocCache<List<Cycle>>? recentCyclesCache,
   })  : _remote = remote,
-        _clock = clock;
+        _clock = clock,
+        _cache = recentCyclesCache;
 
   final CycleRemoteDataSource _remote;
   final Clock _clock;
+  final HiveDocCache<List<Cycle>>? _cache;
+
+  /// Cache key for `watchRecentCycles` is the `coupleId` plus the limit —
+  /// different limits would otherwise overwrite each other.
+  String _key(String coupleId, int limit) => '$coupleId:$limit';
 
   @override
   Stream<Cycle?> watchCurrentCycle(String coupleId) {
@@ -37,13 +45,24 @@ class CycleRepositoryImpl implements CycleRepository {
     String coupleId, {
     int limit = 12,
   }) {
-    return _remote.watchRecentCycles(coupleId, limit: limit).map(
+    final remote = _remote
+        .watchRecentCycles(coupleId, limit: limit)
+        .map<List<Cycle>>(
           (snapshots) => snapshots
               .map(
-                (s) => CycleModel.fromMap(s.data, id: s.id, coupleId: coupleId),
+                (s) =>
+                    CycleModel.fromMap(s.data, id: s.id, coupleId: coupleId),
               )
               .toList(),
         );
+    final cache = _cache;
+    if (cache == null) return remote;
+    // `merge` types as `Stream<T?>`; recent cycles never goes null
+    // (Firestore returns an empty list when there are no docs), so we
+    // strip the nullability for the consumer.
+    return cache
+        .merge(key: _key(coupleId, limit), remote: remote)
+        .map((cycles) => cycles ?? const <Cycle>[]);
   }
 
   @override

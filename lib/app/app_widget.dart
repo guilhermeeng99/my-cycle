@@ -7,10 +7,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mycycle/app/di/injection_container.dart';
 import 'package:mycycle/app/router/app_router.dart';
 import 'package:mycycle/app/theme/app_theme.dart';
+import 'package:mycycle/app/theme/theme_cubit.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/features/auth/domain/auth_state.dart';
-import 'package:mycycle/features/auth/domain/repositories/auth_repository.dart';
 import 'package:mycycle/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:mycycle/features/biometric/presentation/cubits/biometric_lock_cubit.dart';
+import 'package:mycycle/features/startup/presentation/cubits/startup_cubit.dart';
 import 'package:mycycle/gen/i18n/strings.g.dart';
 
 class MyCycleApp extends StatefulWidget {
@@ -20,22 +22,25 @@ class MyCycleApp extends StatefulWidget {
   State<MyCycleApp> createState() => _MyCycleAppState();
 }
 
-class _MyCycleAppState extends State<MyCycleApp> {
-  late final AuthCubit _authCubit;
+class _MyCycleAppState extends State<MyCycleApp> with WidgetsBindingObserver {
   late final AppRouter _router;
-  StreamSubscription<AuthState>? _localeSyncSub;
+  late final StreamSubscription<AuthState> _localeSyncSub;
+  late final StreamSubscription<BiometricLockState> _lockSub;
 
   @override
   void initState() {
     super.initState();
-    _authCubit = AuthCubit(repository: getIt<AuthRepository>());
-    _router = AppRouter(_authCubit);
-    _localeSyncSub = _authCubit.stream.listen(_syncLocaleToUser);
+    WidgetsBinding.instance.addObserver(this);
+    _router = AppRouter(
+      authCubit: getIt<AuthCubit>(),
+      startupCubit: getIt<StartupCubit>(),
+      biometricLockCubit: getIt<BiometricLockCubit>(),
+    );
+    _localeSyncSub = getIt<AuthCubit>().stream.listen(_syncLocaleToUser);
+    // The router redirect needs to re-run on lock-state changes too.
+    _lockSub = getIt<BiometricLockCubit>().stream.listen((_) {});
   }
 
-  // Apply the signed-in user's saved language to the running app. Without this
-  // every cold start defaults to the device locale (set in main()), which
-  // silently overrides whatever the user picked in settings.
   void _syncLocaleToUser(AuthState authState) {
     if (authState is! AuthStateAuthenticated) return;
     final desired = authState.user.language == AppLanguage.en
@@ -46,29 +51,57 @@ class _MyCycleAppState extends State<MyCycleApp> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final lock = getIt<BiometricLockCubit>();
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+        lock.onAppPaused();
+      case AppLifecycleState.resumed:
+        lock.onAppResumed();
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  @override
   void dispose() {
-    unawaited(_localeSyncSub?.cancel());
+    WidgetsBinding.instance.removeObserver(this);
+    unawaited(_localeSyncSub.cancel());
+    unawaited(_lockSub.cancel());
     _router.dispose();
-    unawaited(_authCubit.close());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthCubit>.value(
-      value: _authCubit,
-      child: MaterialApp.router(
-        title: 'MyCycle',
-        theme: AppTheme.light(),
-        darkTheme: AppTheme.dark(),
-        locale: TranslationProvider.of(context).flutterLocale,
-        supportedLocales: AppLocaleUtils.supportedLocales,
-        localizationsDelegates: const <LocalizationsDelegate<Object>>[
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        routerConfig: _router.router,
+    return MultiBlocProvider(
+      providers: <BlocProvider<Object?>>[
+        BlocProvider<ThemeCubit>.value(value: getIt<ThemeCubit>()),
+        BlocProvider<AuthCubit>.value(value: getIt<AuthCubit>()),
+        BlocProvider<StartupCubit>.value(value: getIt<StartupCubit>()),
+        BlocProvider<BiometricLockCubit>.value(
+          value: getIt<BiometricLockCubit>(),
+        ),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp.router(
+            title: 'MyCycle',
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: themeMode,
+            locale: TranslationProvider.of(context).flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: const <LocalizationsDelegate<Object>>[
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: _router.router,
+          );
+        },
       ),
     );
   }
