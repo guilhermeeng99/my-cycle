@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mycycle/app/di/injection_container.dart';
 import 'package:mycycle/core/clock/clock.dart';
+import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
+import 'package:mycycle/features/auth/domain/auth_state.dart';
+import 'package:mycycle/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:mycycle/features/calendar/domain/entities/calendar_day.dart';
 import 'package:mycycle/features/calendar/presentation/cubits/calendar_cubit.dart';
 import 'package:mycycle/features/calendar/presentation/widgets/day_cell.dart';
@@ -96,6 +99,9 @@ class _LoadedBody extends StatelessWidget {
       dayLogRepository: getIt<DayLogRepository>(),
       clock: clock,
     );
+    final authState = context.read<AuthCubit>().state;
+    final isPartner = authState is AuthStateAuthenticated &&
+        authState.user.role == UserRole.partner;
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -104,6 +110,8 @@ class _LoadedBody extends StatelessWidget {
         coupleId: coupleId,
         date: day.date,
         saveDayLog: saveDayLog,
+        dayLogRepository: getIt<DayLogRepository>(),
+        isPartner: isPartner,
       ),
     );
   }

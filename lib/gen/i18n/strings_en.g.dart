@@ -263,6 +263,12 @@ class TranslationsTodayEn {
 	/// en: 'Today, $date'
 	String todayLabel({required Object date}) => 'Today, ${date}';
 
+	/// en: 'Today, $date'
+	String partnerHeaderTitle({required Object date}) => 'Today, ${date}';
+
+	/// en: 'Her cycle, side by side.'
+	String get partnerHeaderSubtitle => 'Her cycle, side by side.';
+
 	/// en: 'Day $n of ~$total'
 	String dayOfCycle({required Object n, required Object total}) => 'Day ${n} of ~${total}';
 
@@ -322,6 +328,9 @@ class TranslationsTodayEn {
 
 	/// en: 'Log today'
 	String get logToday => 'Log today';
+
+	/// en: 'Leave a note'
+	String get partnerNoteCta => 'Leave a note';
 
 	/// en: 'Let's begin'
 	String get emptyTitle => 'Let\'s begin';
@@ -412,6 +421,12 @@ class TranslationsLogEn {
 
 	/// en: 'What's on your mind?'
 	String get notePlaceholder => 'What\'s on your mind?';
+
+	/// en: 'Note for her'
+	String get partnerNoteTitle => 'Note for her';
+
+	/// en: 'Leave a thought for her on this day.'
+	String get partnerNotePlaceholder => 'Leave a thought for her on this day.';
 
 	/// en: 'Cycle markers'
 	String get cycleMarkersTitle => 'Cycle markers';
@@ -833,6 +848,8 @@ extension on Translations {
 			'onboarding.errorGeneric' => 'Something went wrong. Please try again.',
 			'today.greeting' => ({required Object name}) => 'Hello, ${name}',
 			'today.todayLabel' => ({required Object date}) => 'Today, ${date}',
+			'today.partnerHeaderTitle' => ({required Object date}) => 'Today, ${date}',
+			'today.partnerHeaderSubtitle' => 'Her cycle, side by side.',
 			'today.dayOfCycle' => ({required Object n, required Object total}) => 'Day ${n} of ~${total}',
 			'today.phaseMenstrual' => 'Menstrual',
 			'today.phaseFollicular' => 'Follicular',
@@ -853,6 +870,7 @@ extension on Translations {
 			'today.confidenceHigh' => 'High',
 			'today.lateBanner' => ({required Object days}) => 'Period seems late by ${days} days.',
 			'today.logToday' => 'Log today',
+			'today.partnerNoteCta' => 'Leave a note',
 			'today.emptyTitle' => 'Let\'s begin',
 			'today.emptyMessage' => 'No active cycle. Log your first period to begin.',
 			'today.emptyCta' => 'Log first period',
@@ -880,6 +898,8 @@ extension on Translations {
 			'log.moodAnxious' => 'Anxious',
 			'log.noteTitle' => 'Note (optional)',
 			'log.notePlaceholder' => 'What\'s on your mind?',
+			'log.partnerNoteTitle' => 'Note for her',
+			'log.partnerNotePlaceholder' => 'Leave a thought for her on this day.',
 			'log.cycleMarkersTitle' => 'Cycle markers',
 			'log.markPeriodStarted' => 'My period started today',
 			'log.markPeriodEnded' => 'My period ended on this day',

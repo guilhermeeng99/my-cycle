@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1071997209882-kaomkgldplgv8a7rhlt2oj40rdc5g14e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guiga.mycycle",
+            "certificate_hash": "c486d878b4a399838697cdb0cc22faf4397052aa"
+          }
+        },
+        {
           "client_id": "1071997209882-qtuma6f9bdffvci66l3rovqoriog4v5b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

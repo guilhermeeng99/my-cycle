@@ -41,6 +41,12 @@ abstract class AuthRemoteDataSource {
   /// exist (typical for first-time users before onboarding completes).
   Future<Map<String, dynamic>?> fetchUserData(String uid);
 
+  /// Merges `name`, `email`, `photoUrl`, `updatedAt` (and `createdAt` if the
+  /// doc is new) into `users/{uid}`. Called on every sign-in so the user doc
+  /// always carries identity, even for partners whose doc is first created
+  /// by the redemption flow with only coupleId/role.
+  Future<void> upsertIdentity(AuthAccount account, DateTime now);
+
   /// Continuous watch on `users/{uid}`. Emits `null` while the document
   /// doesn't exist; emits the data map on each subsequent update. Used by
   /// the auth repository so the router reacts when onboarding or pairing
@@ -106,6 +112,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<Map<String, dynamic>?> fetchUserData(String uid) async {
     final snapshot = await _firestore.collection('users').doc(uid).get();
     return snapshot.data();
+  }
+
+  @override
+  Future<void> upsertIdentity(AuthAccount account, DateTime now) async {
+    final ref = _firestore.collection('users').doc(account.uid);
+    final ts = Timestamp.fromDate(now);
+    final exists = (await ref.get()).exists;
+    final data = <String, dynamic>{
+      'name': account.name,
+      'email': account.email,
+      'photoUrl': account.photoUrl,
+      'updatedAt': ts,
+      if (!exists) 'createdAt': ts,
+    };
+    await ref.set(data, SetOptions(merge: true));
   }
 
   @override

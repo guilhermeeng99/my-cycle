@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:mycycle/core/clock/clock.dart';
@@ -87,19 +88,28 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<User>> signInWithGoogle() async {
     try {
       final account = await _remote.signInWithGoogle();
+      // Persist identity (name/email/photoUrl) on every sign-in so the user
+      // doc is never missing these — particularly important for partners,
+      // whose doc is created during invite redemption with only coupleId/role.
+      await _remote.upsertIdentity(account, _clock.now());
       final docData = await _remote.fetchUserData(account.uid);
       return Ok<User>(_buildUser(account, docData));
-    } on GoogleSignInException catch (e) {
+    } on GoogleSignInException catch (e, stack) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return const Err<User>(GoogleSignInCancelled());
       }
+      debugPrint('signInWithGoogle GoogleSignInException [${e.code}]: '
+          '${e.description}\n$stack');
       return Err<User>(UnknownAuthFailure(e));
-    } on fb.FirebaseAuthException catch (e) {
+    } on fb.FirebaseAuthException catch (e, stack) {
       if (e.code == 'network-request-failed') {
         return const Err<User>(AuthNetworkFailure());
       }
+      debugPrint('signInWithGoogle FirebaseAuthException [${e.code}]: '
+          '${e.message}\n$stack');
       return Err<User>(FirebaseAuthError(e.code, e.message ?? ''));
-    } on Object catch (e) {
+    } on Object catch (e, stack) {
+      debugPrint('signInWithGoogle unexpected: $e\n$stack');
       return Err<User>(UnknownAuthFailure(e));
     }
   }

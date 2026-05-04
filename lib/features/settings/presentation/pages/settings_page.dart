@@ -73,12 +73,11 @@ class _LoadedBody extends StatelessWidget {
               ),
               const SizedBox(height: BloomSpacing.sectionGap),
 
-              BloomGroupHeader(t.settings.privacy),
               _PrivacyGroup(
                 notificationsEnabled: state.user.notificationsEnabled,
                 biometricEnabled: state.user.biometricEnabled,
+                showNotifications: isOwner,
               ),
-              const SizedBox(height: BloomSpacing.sectionGap),
 
               if (isOwner && couple != null) ...<Widget>[
                 BloomGroupHeader(t.cycleDefaults.title),
@@ -204,9 +203,11 @@ class _PrivacyGroup extends StatefulWidget {
   const _PrivacyGroup({
     required this.notificationsEnabled,
     required this.biometricEnabled,
+    required this.showNotifications,
   });
   final bool notificationsEnabled;
   final bool biometricEnabled;
+  final bool showNotifications;
 
   @override
   State<_PrivacyGroup> createState() => _PrivacyGroupState();
@@ -231,15 +232,16 @@ class _PrivacyGroupState extends State<_PrivacyGroup> {
   Widget build(BuildContext context) {
     final t = context.t;
     final tiles = <Widget>[
-      BloomSettingsTile(
-        icon: BloomIcons.bell,
-        title: t.settings.notificationsTitle,
-        subtitle: t.settings.notificationsBody,
-        trailing: Switch.adaptive(
-          value: widget.notificationsEnabled,
-          onChanged: _toggleNotifications,
+      if (widget.showNotifications)
+        BloomSettingsTile(
+          icon: BloomIcons.bell,
+          title: t.settings.notificationsTitle,
+          subtitle: t.settings.notificationsBody,
+          trailing: Switch.adaptive(
+            value: widget.notificationsEnabled,
+            onChanged: _toggleNotifications,
+          ),
         ),
-      ),
       if (_bioAvailable ?? false)
         BloomSettingsTile(
           icon: BloomIcons.shield,
@@ -254,7 +256,15 @@ class _PrivacyGroupState extends State<_PrivacyGroup> {
         ),
     ];
 
-    return BloomGroupedList(children: tiles);
+    if (tiles.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        BloomGroupHeader(t.settings.privacy),
+        BloomGroupedList(children: tiles),
+        const SizedBox(height: BloomSpacing.sectionGap),
+      ],
+    );
   }
 
   Future<void> _toggleNotifications(bool value) async {

@@ -124,7 +124,10 @@ Future<void> initDependencies() async {
       () => DayLogRemoteDataSourceImpl(firestore: getIt<FirebaseFirestore>()),
     )
     ..registerLazySingleton<DayLogRepository>(
-      () => DayLogRepositoryImpl(remote: getIt<DayLogRemoteDataSource>()),
+      () => DayLogRepositoryImpl(
+        remote: getIt<DayLogRemoteDataSource>(),
+        clock: getIt<Clock>(),
+      ),
     )
     // Pairing / couple feature
     ..registerLazySingleton<CoupleRemoteDataSource>(

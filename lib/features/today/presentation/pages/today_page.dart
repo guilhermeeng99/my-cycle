@@ -54,13 +54,18 @@ class _LoadedBody extends StatelessWidget {
     final today = getIt<Clock>().now();
     final dateLabel = DateFormat.MMMMd(locale).format(today);
     final firstName = _firstName(vm.user.name);
+    final isPartner = vm.user.role == UserRole.partner;
 
     return ListView(
       padding: const EdgeInsets.only(bottom: 140),
       children: <Widget>[
         BloomLargeHeader(
-          title: t.today.greeting(name: firstName),
-          subtitle: t.today.todayLabel(date: dateLabel),
+          title: isPartner
+              ? t.today.partnerHeaderTitle(date: dateLabel)
+              : t.today.greeting(name: firstName),
+          subtitle: isPartner
+              ? t.today.partnerHeaderSubtitle
+              : t.today.todayLabel(date: dateLabel),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(
@@ -116,6 +121,7 @@ class _LogTodayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final theme = Theme.of(context);
+    final isPartner = vm.user.role == UserRole.partner;
     return Material(
       borderRadius: BloomRadii.button,
       clipBehavior: Clip.antiAlias,
@@ -149,7 +155,7 @@ class _LogTodayButton extends StatelessWidget {
                 ),
                 const SizedBox(width: BloomSpacing.s12),
                 Text(
-                  t.today.logToday,
+                  isPartner ? t.today.partnerNoteCta : t.today.logToday,
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.w600,
@@ -169,15 +175,18 @@ class _LogTodayButton extends StatelessWidget {
       dayLogRepository: getIt<DayLogRepository>(),
       clock: getIt<Clock>(),
     );
+    final isPartner = vm.user.role == UserRole.partner;
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => DayLogSheet(
         coupleId: vm.couple.id,
-        currentCycleId: vm.currentCycle.id,
+        currentCycleId: isPartner ? null : vm.currentCycle.id,
         date: getIt<Clock>().now(),
         saveDayLog: saveDayLog,
+        dayLogRepository: getIt<DayLogRepository>(),
+        isPartner: isPartner,
       ),
     );
   }
@@ -283,6 +292,7 @@ class _EmptyBody extends StatelessWidget {
       dayLogRepository: getIt<DayLogRepository>(),
       clock: getIt<Clock>(),
     );
+    final isPartner = user?.role == UserRole.partner;
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -291,6 +301,8 @@ class _EmptyBody extends StatelessWidget {
         coupleId: couple.id,
         date: getIt<Clock>().now(),
         saveDayLog: saveDayLog,
+        dayLogRepository: getIt<DayLogRepository>(),
+        isPartner: isPartner,
       ),
     );
   }

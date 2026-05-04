@@ -93,6 +93,7 @@ class CoupleRemoteDataSourceImpl implements CoupleRemoteDataSource {
     final qs = await _firestore
         .collection('couples')
         .where('inviteCode', isEqualTo: code)
+        .where('partnerId', isNull: true)
         .limit(1)
         .get();
     if (qs.docs.isEmpty) {
@@ -124,13 +125,14 @@ class CoupleRemoteDataSourceImpl implements CoupleRemoteDataSource {
           'inviteExpiresAt': null,
           'updatedAt': Timestamp.fromDate(now),
         })
-        ..update(
+        ..set(
           _firestore.collection('users').doc(partnerId),
           <String, dynamic>{
             'coupleId': coupleRef.id,
             'role': 'partner',
             'updatedAt': Timestamp.fromDate(now),
           },
+          SetOptions(merge: true),
         );
 
       return <String, dynamic>{

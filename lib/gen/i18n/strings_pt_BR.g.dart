@@ -157,6 +157,8 @@ class _TranslationsTodayPtBr implements TranslationsTodayEn {
 	// Translations
 	@override String greeting({required Object name}) => 'Olá, ${name}';
 	@override String todayLabel({required Object date}) => 'Hoje, ${date}';
+	@override String partnerHeaderTitle({required Object date}) => 'Hoje, ${date}';
+	@override String get partnerHeaderSubtitle => 'O ciclo dela, lado a lado.';
 	@override String dayOfCycle({required Object n, required Object total}) => 'Dia ${n} de ~${total}';
 	@override String get phaseMenstrual => 'Menstrual';
 	@override String get phaseFollicular => 'Folicular';
@@ -177,6 +179,7 @@ class _TranslationsTodayPtBr implements TranslationsTodayEn {
 	@override String get confidenceHigh => 'Alta';
 	@override String lateBanner({required Object days}) => 'Sua menstruação está atrasada ${days} dias.';
 	@override String get logToday => 'Registrar hoje';
+	@override String get partnerNoteCta => 'Deixar um recado';
 	@override String get emptyTitle => 'Vamos começar';
 	@override String get emptyMessage => 'Sem ciclo ativo. Registre sua primeira menstruação pra começar.';
 	@override String get emptyCta => 'Registrar primeira menstruação';
@@ -213,6 +216,8 @@ class _TranslationsLogPtBr implements TranslationsLogEn {
 	@override String get moodAnxious => 'Ansiosa';
 	@override String get noteTitle => 'Nota (opcional)';
 	@override String get notePlaceholder => 'O que tá passando?';
+	@override String get partnerNoteTitle => 'Recado para ela';
+	@override String get partnerNotePlaceholder => 'Deixe um pensamento para ela neste dia.';
 	@override String get cycleMarkersTitle => 'Marcadores do ciclo';
 	@override String get markPeriodStarted => 'Minha menstruação começou hoje';
 	@override String get markPeriodEnded => 'Minha menstruação terminou neste dia';
@@ -442,6 +447,8 @@ extension on TranslationsPtBr {
 			'onboarding.errorGeneric' => 'Algo deu errado. Tenta de novo.',
 			'today.greeting' => ({required Object name}) => 'Olá, ${name}',
 			'today.todayLabel' => ({required Object date}) => 'Hoje, ${date}',
+			'today.partnerHeaderTitle' => ({required Object date}) => 'Hoje, ${date}',
+			'today.partnerHeaderSubtitle' => 'O ciclo dela, lado a lado.',
 			'today.dayOfCycle' => ({required Object n, required Object total}) => 'Dia ${n} de ~${total}',
 			'today.phaseMenstrual' => 'Menstrual',
 			'today.phaseFollicular' => 'Folicular',
@@ -462,6 +469,7 @@ extension on TranslationsPtBr {
 			'today.confidenceHigh' => 'Alta',
 			'today.lateBanner' => ({required Object days}) => 'Sua menstruação está atrasada ${days} dias.',
 			'today.logToday' => 'Registrar hoje',
+			'today.partnerNoteCta' => 'Deixar um recado',
 			'today.emptyTitle' => 'Vamos começar',
 			'today.emptyMessage' => 'Sem ciclo ativo. Registre sua primeira menstruação pra começar.',
 			'today.emptyCta' => 'Registrar primeira menstruação',
@@ -489,6 +497,8 @@ extension on TranslationsPtBr {
 			'log.moodAnxious' => 'Ansiosa',
 			'log.noteTitle' => 'Nota (opcional)',
 			'log.notePlaceholder' => 'O que tá passando?',
+			'log.partnerNoteTitle' => 'Recado para ela',
+			'log.partnerNotePlaceholder' => 'Deixe um pensamento para ela neste dia.',
 			'log.cycleMarkersTitle' => 'Marcadores do ciclo',
 			'log.markPeriodStarted' => 'Minha menstruação começou hoje',
 			'log.markPeriodEnded' => 'Minha menstruação terminou neste dia',

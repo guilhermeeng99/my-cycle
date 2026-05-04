@@ -30,6 +30,8 @@ void main() {
     remote = MockAuthRemoteDataSource();
     clock = MockClock();
     when(clock.now).thenReturn(defaultTestNow);
+    when(() => remote.upsertIdentity(testAccount, defaultTestNow))
+        .thenAnswer((_) async {});
     repository = AuthRepositoryImpl(remote: remote, clock: clock);
   });
 

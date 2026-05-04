@@ -6,6 +6,7 @@ import 'package:mycycle/core/errors/result.dart';
 import 'package:mycycle/design_system/components/components.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
+import 'package:mycycle/features/cycle/domain/repositories/day_log_repository.dart';
 import 'package:mycycle/features/logging/domain/usecases/save_day_log.dart';
 import 'package:mycycle/gen/i18n/strings.g.dart';
 
@@ -14,8 +15,10 @@ class DayLogSheet extends StatefulWidget {
     required this.coupleId,
     required this.date,
     required this.saveDayLog,
+    required this.dayLogRepository,
     this.currentCycleId,
     this.initialLog,
+    this.isPartner = false,
     super.key,
   });
 
@@ -23,7 +26,9 @@ class DayLogSheet extends StatefulWidget {
   final String? currentCycleId;
   final DateTime date;
   final SaveDayLog saveDayLog;
+  final DayLogRepository dayLogRepository;
   final DayLog? initialLog;
+  final bool isPartner;
 
   @override
   State<DayLogSheet> createState() => _DayLogSheetState();
@@ -45,7 +50,11 @@ class _DayLogSheetState extends State<DayLogSheet> {
     _flow = initial?.flow;
     _symptoms = {...?initial?.symptoms};
     _mood = initial?.mood;
-    _noteCtrl = TextEditingController(text: initial?.ownerNote ?? '');
+    _noteCtrl = TextEditingController(
+      text: widget.isPartner
+          ? (initial?.partnerNote ?? '')
+          : (initial?.ownerNote ?? ''),
+    );
   }
 
   @override
@@ -61,19 +70,25 @@ class _DayLogSheetState extends State<DayLogSheet> {
     final messenger = ScaffoldMessenger.of(context);
     final t = context.t;
 
-    final result = await widget.saveDayLog(
-      SaveDayLogParams(
-        coupleId: widget.coupleId,
-        currentCycleId: widget.currentCycleId,
-        date: widget.date,
-        flow: _flow,
-        symptoms: _symptoms,
-        mood: _mood,
-        ownerNote: _noteCtrl.text,
-        markPeriodStarted: _markPeriodStarted,
-        markPeriodEnded: _markPeriodEnded,
-      ),
-    );
+    final result = widget.isPartner
+        ? await widget.dayLogRepository.savePartnerNote(
+            coupleId: widget.coupleId,
+            date: widget.date,
+            note: _noteCtrl.text,
+          )
+        : await widget.saveDayLog(
+            SaveDayLogParams(
+              coupleId: widget.coupleId,
+              currentCycleId: widget.currentCycleId,
+              date: widget.date,
+              flow: _flow,
+              symptoms: _symptoms,
+              mood: _mood,
+              ownerNote: _noteCtrl.text,
+              markPeriodStarted: _markPeriodStarted,
+              markPeriodEnded: _markPeriodEnded,
+            ),
+          );
 
     if (!mounted) return;
     setState(() => _saving = false);
@@ -93,6 +108,31 @@ class _DayLogSheetState extends State<DayLogSheet> {
 
   Widget _buildBody(BuildContext context) {
     final t = context.t;
+    if (widget.isPartner) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(
+          BloomSpacing.s24,
+          BloomSpacing.s12,
+          BloomSpacing.s24,
+          BloomSpacing.s24,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _Section(label: t.log.partnerNoteTitle),
+            const SizedBox(height: BloomSpacing.s8),
+            TextField(
+              controller: _noteCtrl,
+              maxLines: 4,
+              maxLength: 500,
+              decoration: InputDecoration(
+                hintText: t.log.partnerNotePlaceholder,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         BloomSpacing.s24,

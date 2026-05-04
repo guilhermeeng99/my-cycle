@@ -44,10 +44,12 @@ service cloud.firestore {
 
     // Couples
     match /couples/{coupleId} {
-      // Read: members only
+      // Read: members, or any allowlisted user looking up an open invite
+      // (partnerId == null && inviteCode != null) so the redemption query can resolve.
       allow read: if isAllowedUser() && (
         request.auth.uid == resource.data.ownerId ||
-        request.auth.uid == resource.data.partnerId
+        request.auth.uid == resource.data.partnerId ||
+        (resource.data.partnerId == null && resource.data.inviteCode != null)
       );
 
       // Create: only as owner, partnerId must be null
@@ -99,6 +101,12 @@ service cloud.firestore {
       allow update: if isAllowedUser() && isCouplePartner(coupleId) &&
         request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['partnerNote', 'updatedAt']);
+
+      // Partner can create a day doc carrying only their note + timestamps,
+      // so they can leave a note on a day the owner hasn't logged yet.
+      allow create: if isAllowedUser() && isCouplePartner(coupleId) &&
+        request.resource.data.keys()
+          .hasOnly(['partnerNote', 'createdAt', 'updatedAt']);
     }
   }
 }

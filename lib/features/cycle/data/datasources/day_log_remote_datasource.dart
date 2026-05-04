@@ -23,6 +23,16 @@ abstract class DayLogRemoteDataSource {
     required Map<String, dynamic> data,
   });
 
+  /// Partner-only write path: only `partnerNote` + `updatedAt` (and
+  /// `createdAt` if the doc is new). Avoids touching owner-only fields,
+  /// which Firestore rules would reject.
+  Future<void> savePartnerNote({
+    required String coupleId,
+    required DateTime date,
+    required String? note,
+    required DateTime now,
+  });
+
   Future<void> deleteDayLog({
     required String coupleId,
     required DateTime date,
@@ -81,6 +91,25 @@ class DayLogRemoteDataSourceImpl implements DayLogRemoteDataSource {
   }) async {
     final id = formatIsoDate(date);
     await _daysRef(coupleId).doc(id).set(data);
+  }
+
+  @override
+  Future<void> savePartnerNote({
+    required String coupleId,
+    required DateTime date,
+    required String? note,
+    required DateTime now,
+  }) async {
+    final id = formatIsoDate(date);
+    final ref = _daysRef(coupleId).doc(id);
+    final exists = (await ref.get()).exists;
+    final ts = Timestamp.fromDate(now);
+    final data = <String, dynamic>{
+      'partnerNote': (note == null || note.trim().isEmpty) ? null : note.trim(),
+      'updatedAt': ts,
+      if (!exists) 'createdAt': ts,
+    };
+    await ref.set(data, SetOptions(merge: true));
   }
 
   @override

@@ -8,17 +8,21 @@ import 'package:mycycle/features/cycle/data/repositories/day_log_repository_impl
 import 'package:mycycle/features/logging/domain/failures/log_failure.dart';
 
 import '../../../../harness/factories/user_factory.dart';
+import '../../../../harness/mocks.dart';
 
 class _MockDayLogRemoteDataSource extends Mock
     implements DayLogRemoteDataSource {}
 
 void main() {
   late _MockDayLogRemoteDataSource remote;
+  late MockClock clock;
   late DayLogRepositoryImpl repository;
 
   setUp(() {
     remote = _MockDayLogRemoteDataSource();
-    repository = DayLogRepositoryImpl(remote: remote);
+    clock = MockClock();
+    when(clock.now).thenReturn(defaultTestNow);
+    repository = DayLogRepositoryImpl(remote: remote, clock: clock);
   });
 
   DayLog logFor({
