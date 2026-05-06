@@ -33,9 +33,6 @@ jobs:
       - name: Regenerate slang i18n
         run: dart run slang
 
-      - name: Regenerate launcher icons
-        run: dart run flutter_launcher_icons
-
       - name: Static analysis
         run: flutter analyze
 
