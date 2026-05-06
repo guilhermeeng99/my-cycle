@@ -39,6 +39,19 @@ jobs:
       - name: Tests
         run: flutter test
 
+      # Replace the +<buildNumber> in pubspec.yaml with the GitHub Actions
+      # run number so each distributed APK gets a unique, monotonically
+      # increasing versionCode without anyone needing to bump pubspec.yaml
+      # manually. The semver part (X.Y.Z) is preserved — bump that by hand
+      # when you want a meaningful version label.
+      - name: Bump build number to GITHUB_RUN_NUMBER
+        run: |
+          SEMVER=$(grep -E "^version:" pubspec.yaml | sed -E 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+.*/\1/')
+          NEW_VERSION="${SEMVER}+${GITHUB_RUN_NUMBER}"
+          sed -i "s/^version: .*$/version: ${NEW_VERSION}/" pubspec.yaml
+          echo "Bumped version to: ${NEW_VERSION}"
+          grep -E "^version:" pubspec.yaml
+
       - name: Decode release keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
