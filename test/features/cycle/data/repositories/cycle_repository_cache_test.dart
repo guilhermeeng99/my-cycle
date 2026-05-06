@@ -84,6 +84,7 @@ void main() {
         .watchRecentCycles('couple-1')
         .listen((cycles) => emitted.add(cycles.length));
 
+    // The cache emit is fully synchronous; one round of microtasks suffices.
     await pumpEventQueue();
     expect(emitted, <int>[1], reason: 'cached first emission');
 
@@ -91,7 +92,10 @@ void main() {
       _snapshot(id: 'a', totalLengthDays: 30),
       _snapshot(id: 'b', totalLengthDays: 27),
     ]);
-    await pumpEventQueue();
+    // Remote propagation walks the stream → repo → listener pipeline plus a
+    // Hive write. The default 20 microtasks aren't always enough on a busy
+    // CI runner; bump to 100 for headroom.
+    await pumpEventQueue(times: 100);
     expect(emitted, <int>[1, 2]);
 
     await sub.cancel();
@@ -106,7 +110,7 @@ void main() {
 
     final sub = repository.watchRecentCycles('couple-1').listen((_) {});
     controller.add(<CycleDocSnapshot>[_snapshot(id: 'a', totalLengthDays: 30)]);
-    await pumpEventQueue();
+    await pumpEventQueue(times: 100);
 
     final cached = cache.read('couple-1:12');
     expect(cached, isNotNull);
