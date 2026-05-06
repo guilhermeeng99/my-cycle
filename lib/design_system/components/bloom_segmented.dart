@@ -2,12 +2,30 @@ import 'package:flutter/material.dart';
 
 import 'package:mycycle/design_system/tokens/tokens.dart';
 
+/// One option in a [BloomSegmented] control.
 class BloomSegment<T> {
   const BloomSegment({required this.value, required this.label});
   final T value;
   final String label;
 }
 
+/// Pill-shaped segmented control — FocusPomo-style.
+///
+/// The track is a soft pebble pill; the selected segment is a terracotta
+/// pill thumb with onPrimary text. Switching between segments animates the
+/// background fill in 200ms.
+///
+/// Example:
+/// ```dart
+/// BloomSegmented<AppLanguage>(
+///   value: lang,
+///   segments: const [
+///     BloomSegment(value: AppLanguage.en, label: 'EN'),
+///     BloomSegment(value: AppLanguage.ptBr, label: 'PT-BR'),
+///   ],
+///   onChanged: (v) => cubit.updateLanguage(v),
+/// )
+/// ```
 class BloomSegmented<T> extends StatelessWidget {
   const BloomSegmented({
     required this.segments,
@@ -24,20 +42,21 @@ class BloomSegmented<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest
-            .withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(BloomRadii.md),
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BloomRadii.pillShape,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: segments
-            .map((s) => _Segment<T>(
-                  segment: s,
-                  selected: s.value == value,
-                  onTap: () => onChanged(s.value),
-                ))
+            .map(
+              (s) => _Segment<T>(
+                segment: s,
+                selected: s.value == value,
+                onTap: () => onChanged(s.value),
+              ),
+            )
             .toList(),
       ),
     );
@@ -65,20 +84,20 @@ class _Segment<T> extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(
-          horizontal: BloomSpacing.s12,
-          vertical: BloomSpacing.s4,
+          horizontal: BloomSpacing.s16,
+          vertical: BloomSpacing.s8,
         ),
         decoration: BoxDecoration(
-          color: selected ? theme.colorScheme.surface : Colors.transparent,
-          borderRadius: BorderRadius.circular(BloomRadii.sm),
+          color: selected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BloomRadii.pillShape,
         ),
         child: Text(
           segment.label,
           style: theme.textTheme.labelMedium?.copyWith(
             color: selected
-                ? theme.colorScheme.primary
+                ? theme.colorScheme.onPrimary
                 : theme.colorScheme.onSurfaceVariant,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),

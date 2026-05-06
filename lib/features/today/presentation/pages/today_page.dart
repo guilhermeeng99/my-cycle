@@ -74,7 +74,15 @@ class _LoadedBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              const SizedBox(height: BloomSpacing.s8),
+              _WeekStrip(
+                today: today,
+                onTapDate: (date) => _openLogSheet(
+                  context: context,
+                  vm: vm,
+                  date: date,
+                ),
+              ),
+              const SizedBox(height: BloomSpacing.s32),
               Center(
                 child: CycleRing(
                   dayN: vm.dayN,
@@ -84,7 +92,7 @@ class _LoadedBody extends StatelessWidget {
               ),
               const SizedBox(height: BloomSpacing.s32),
               PhaseNarrativeCard(phase: vm.phase),
-              const SizedBox(height: BloomSpacing.s16),
+              const SizedBox(height: BloomSpacing.s12),
               UpcomingDatesCard(
                 nextStart: vm.prediction.predictedNextStart,
                 nextEnd: vm.prediction.predictedNextStartRangeEnd,
@@ -94,11 +102,20 @@ class _LoadedBody extends StatelessWidget {
                 ovulation: vm.prediction.predictedOvulation,
               ),
               if (vm.isLatePeriod) ...<Widget>[
-                const SizedBox(height: BloomSpacing.s16),
+                const SizedBox(height: BloomSpacing.s12),
                 TodayLateBanner(daysLate: vm.latenessDays),
               ],
               const SizedBox(height: BloomSpacing.s32),
-              _LogTodayButton(vm: vm),
+              BloomPrimaryButton(
+                label:
+                    isPartner ? t.today.partnerNoteCta : t.today.logToday,
+                icon: BloomIcons.edit,
+                onPressed: () => _openLogSheet(
+                  context: context,
+                  vm: vm,
+                  date: today,
+                ),
+              ),
             ],
           ),
         ),
@@ -111,65 +128,12 @@ class _LoadedBody extends StatelessWidget {
     if (trimmed.isEmpty) return '';
     return trimmed.split(RegExp(r'\s+')).first;
   }
-}
 
-class _LogTodayButton extends StatelessWidget {
-  const _LogTodayButton({required this.vm});
-  final TodayViewModel vm;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final theme = Theme.of(context);
-    final isPartner = vm.user.role == UserRole.partner;
-    return Material(
-      borderRadius: BloomRadii.button,
-      clipBehavior: Clip.antiAlias,
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              theme.colorScheme.primary,
-              theme.colorScheme.primary.withValues(alpha: 0.85),
-            ],
-          ),
-          borderRadius: BloomRadii.button,
-        ),
-        child: InkWell(
-          onTap: () => _openLogSheet(context),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BloomSpacing.s24,
-              vertical: BloomSpacing.s16,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  BloomIcons.edit,
-                  size: 16,
-                  color: theme.colorScheme.onPrimary,
-                ),
-                const SizedBox(width: BloomSpacing.s12),
-                Text(
-                  isPartner ? t.today.partnerNoteCta : t.today.logToday,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openLogSheet(BuildContext context) async {
+  Future<void> _openLogSheet({
+    required BuildContext context,
+    required TodayViewModel vm,
+    required DateTime date,
+  }) async {
     final saveDayLog = SaveDayLog(
       cycleRepository: getIt<CycleRepository>(),
       dayLogRepository: getIt<DayLogRepository>(),
@@ -183,13 +147,49 @@ class _LogTodayButton extends StatelessWidget {
       builder: (_) => DayLogSheet(
         coupleId: vm.couple.id,
         currentCycleId: isPartner ? null : vm.currentCycle.id,
-        date: getIt<Clock>().now(),
+        date: date,
         saveDayLog: saveDayLog,
         dayLogRepository: getIt<DayLogRepository>(),
         isPartner: isPartner,
       ),
     );
   }
+}
+
+/// Day-of-week strip — renders the past 6 days + today as tappable pills.
+/// Today is the rightmost pill (selected); tapping any pill opens the log
+/// sheet for that date.
+class _WeekStrip extends StatelessWidget {
+  const _WeekStrip({required this.today, required this.onTapDate});
+
+  final DateTime today;
+  final ValueChanged<DateTime> onTapDate;
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    final dayFmt = DateFormat.E(locale);
+    final pills = <BloomDayPill>[
+      for (var i = 6; i >= 0; i--)
+        () {
+          final date = today.subtract(Duration(days: i));
+          return BloomDayPill(
+            date: DateTime(date.year, date.month, date.day),
+            dayLabel: _capitalize(dayFmt.format(date)),
+            numberLabel: date.day.toString(),
+          );
+        }(),
+    ];
+
+    return BloomDayPillRow(
+      pills: pills,
+      selected: DateTime(today.year, today.month, today.day),
+      onSelected: onTapDate,
+    );
+  }
+
+  static String _capitalize(String s) =>
+      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1).toLowerCase();
 }
 
 class _EmptyBody extends StatelessWidget {
@@ -225,28 +225,22 @@ class _EmptyBody extends StatelessWidget {
               children: <Widget>[
                 const Spacer(flex: 2),
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: <Color>[
-                        primary.withValues(alpha: 0.18),
-                        primary.withValues(alpha: 0.08),
-                      ],
-                    ),
+                    color: primary.withValues(alpha: 0.16),
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child:
-                      Icon(BloomIcons.sparkle, size: 32, color: primary),
+                      Icon(BloomIcons.sparkle, size: 36, color: primary),
                 ),
                 const SizedBox(height: BloomSpacing.s24),
                 Text(
                   t.today.emptyTitle,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -259,7 +253,7 @@ class _EmptyBody extends StatelessWidget {
                     t.today.emptyMessage,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
-                      height: 1.4,
+                      height: 1.45,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -326,7 +320,9 @@ class _ErrorBody extends StatelessWidget {
             const SizedBox(height: BloomSpacing.s16),
             Text(
               t.today.errorGeneric,
-              style: theme.textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

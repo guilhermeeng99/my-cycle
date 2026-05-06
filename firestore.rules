@@ -14,7 +14,8 @@ service cloud.firestore {
         request.auth.token.email_verified == true &&
         request.auth.token.email in [
           'guilhermeeng99@gmail.com',
-          'camila.mndes@gmail.com'
+          'camila.mndes@gmail.com',
+          'guigapasocax@gmail.com'
         ];
     }
 
@@ -37,9 +38,24 @@ service cloud.firestore {
       return request.auth.uid == c.partnerId;
     }
 
-    // Users — each user reads/writes only their own doc
+    // Users — owner reads/writes their own doc; couple members can also
+    // read each other's profile (name, email, photoUrl) so the Settings
+    // screen can show both partners side by side. Writes stay self-only.
     match /users/{userId} {
-      allow read, write: if isAllowedUser() && request.auth.uid == userId;
+      allow write: if isAllowedUser() && request.auth.uid == userId;
+
+      allow read: if isAllowedUser() && (
+        request.auth.uid == userId ||
+        // Same-couple read: requester's coupleId matches target's coupleId
+        // (both must be non-null). Costs one extra rules `get` per read,
+        // cached for 10s on the rules engine.
+        (
+          resource.data.coupleId != null &&
+          resource.data.coupleId ==
+            get(/databases/$(database)/documents/users/$(request.auth.uid))
+              .data.coupleId
+        )
+      );
     }
 
     // Couples

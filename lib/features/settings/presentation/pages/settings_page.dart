@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mycycle/app/di/injection_container.dart';
-import 'package:mycycle/app/theme/theme_cubit.dart';
 import 'package:mycycle/core/constants/app_constants.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/core/errors/result.dart';
@@ -59,7 +58,7 @@ class _LoadedBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              IdentityCard(user: state.user),
+              IdentityCard(user: state.user, partner: state.partner),
               const SizedBox(height: BloomSpacing.s16),
               CoupleBondCard(state: state),
               const SizedBox(height: BloomSpacing.sectionGap),
@@ -68,7 +67,6 @@ class _LoadedBody extends StatelessWidget {
               BloomGroupedList(
                 children: <Widget>[
                   _LanguageTile(current: state.user.language),
-                  const _AppearanceTile(),
                 ],
               ),
               const SizedBox(height: BloomSpacing.sectionGap),
@@ -141,7 +139,7 @@ class _LanguageTile extends StatelessWidget {
     return BloomSettingsTile(
       icon: BloomIcons.globe,
       title: t.settings.language,
-      bottom: BloomSegmented<AppLanguage>(
+      trailing: BloomSegmented<AppLanguage>(
         value: current,
         segments: <BloomSegment<AppLanguage>>[
           BloomSegment(value: AppLanguage.en, label: t.settings.languageEn),
@@ -168,33 +166,6 @@ class _LanguageTile extends StatelessWidget {
     }
     await LocaleSettings.setLocale(
       lang == AppLanguage.en ? AppLocale.en : AppLocale.ptBr,
-    );
-  }
-}
-
-class _AppearanceTile extends StatelessWidget {
-  const _AppearanceTile();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, mode) => BloomSettingsTile(
-        icon: BloomIcons.appearance,
-        title: t.settings.appearance,
-        bottom: BloomSegmented<ThemeMode>(
-          value: mode,
-          segments: <BloomSegment<ThemeMode>>[
-            BloomSegment(
-              value: ThemeMode.system,
-              label: t.settings.themeSystem,
-            ),
-            BloomSegment(value: ThemeMode.light, label: t.settings.themeLight),
-            BloomSegment(value: ThemeMode.dark, label: t.settings.themeDark),
-          ],
-          onChanged: (m) => context.read<ThemeCubit>().setThemeMode(m),
-        ),
-      ),
     );
   }
 }
@@ -344,15 +315,15 @@ class _SignOutAction extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: BloomSpacing.s16,
-                vertical: BloomSpacing.s16,
+                vertical: BloomSpacing.s20,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   if (isSigningOut)
                     SizedBox(
-                      width: 16,
-                      height: 16,
+                      width: 18,
+                      height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
@@ -363,7 +334,7 @@ class _SignOutAction extends StatelessWidget {
                   else
                     Icon(
                       BloomIcons.signOut,
-                      size: 14,
+                      size: 18,
                       color: theme.colorScheme.error,
                     ),
                   const SizedBox(width: BloomSpacing.s8),
@@ -371,7 +342,7 @@ class _SignOutAction extends StatelessWidget {
                     t.signIn.signOut,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.error,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -389,76 +360,36 @@ class _DeleteAllDataAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
     final theme = Theme.of(context);
+    final t = context.t;
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
         final isDeleting =
             state is SettingsLoaded && state.isDeletingAllData;
-        return Material(
-          color: theme.colorScheme.surface,
-          borderRadius: BloomRadii.card,
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: isDeleting ? null : () => _confirmAndDelete(context),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: BloomSpacing.s16,
-                vertical: BloomSpacing.s12,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.error.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(BloomRadii.md),
-                    ),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      BloomIcons.warning,
-                      size: 16,
-                      color: theme.colorScheme.error,
-                    ),
-                  ),
-                  const SizedBox(width: BloomSpacing.s16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          t.settings.deleteAllData,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.error,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: BloomSpacing.s4),
-                        Text(
-                          t.settings.deleteAllDataBody,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isDeleting)
-                    SizedBox(
-                      width: 16,
-                      height: 16,
+        return BloomGroupedList(
+          children: <Widget>[
+            BloomSettingsTile(
+              icon: BloomIcons.warning,
+              iconTint: theme.colorScheme.error,
+              destructive: true,
+              title: t.settings.deleteAllData,
+              subtitle: t.settings.deleteAllDataBody,
+              trailing: isDeleting
+                  ? SizedBox(
+                      width: 18,
+                      height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           theme.colorScheme.error,
                         ),
                       ),
-                    ),
-                ],
-              ),
+                    )
+                  : null,
+              onTap:
+                  isDeleting ? null : () => _confirmAndDelete(context),
             ),
-          ),
+          ],
         );
       },
     );

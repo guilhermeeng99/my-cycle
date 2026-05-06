@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mycycle/core/entities/couple.dart';
@@ -27,6 +28,7 @@ final class SettingsLoaded extends SettingsState {
   const SettingsLoaded({
     required this.user,
     this.couple,
+    this.partner,
     this.activeInviteCode,
     this.isGeneratingInvite = false,
     this.isLeavingCouple = false,
@@ -36,6 +38,11 @@ final class SettingsLoaded extends SettingsState {
 
   final User user;
   final Couple? couple;
+
+  /// The other member's profile when the couple is paired. `null` while
+  /// the partner doc is still loading (or when the user is solo).
+  final User? partner;
+
   final InviteCode? activeInviteCode;
   final bool isGeneratingInvite;
   final bool isLeavingCouple;
@@ -45,6 +52,7 @@ final class SettingsLoaded extends SettingsState {
   SettingsLoaded copyWith({
     User? user,
     Couple? couple,
+    User? partner,
     InviteCode? activeInviteCode,
     bool? isGeneratingInvite,
     bool? isLeavingCouple,
@@ -54,6 +62,7 @@ final class SettingsLoaded extends SettingsState {
     return SettingsLoaded(
       user: user ?? this.user,
       couple: couple ?? this.couple,
+      partner: partner ?? this.partner,
       activeInviteCode: activeInviteCode ?? this.activeInviteCode,
       isGeneratingInvite: isGeneratingInvite ?? this.isGeneratingInvite,
       isLeavingCouple: isLeavingCouple ?? this.isLeavingCouple,
@@ -62,10 +71,26 @@ final class SettingsLoaded extends SettingsState {
     );
   }
 
+  /// Explicitly clear the partner — used when the couple becomes unpaired
+  /// (the regular [copyWith] can't distinguish "leave as-is" from "set to
+  /// null" without an extra sentinel).
+  SettingsLoaded clearPartner() {
+    return SettingsLoaded(
+      user: user,
+      couple: couple,
+      activeInviteCode: activeInviteCode,
+      isGeneratingInvite: isGeneratingInvite,
+      isLeavingCouple: isLeavingCouple,
+      isSigningOut: isSigningOut,
+      isDeletingAllData: isDeletingAllData,
+    );
+  }
+
   @override
   List<Object?> get props => [
         user,
         couple,
+        partner,
         activeInviteCode,
         isGeneratingInvite,
         isLeavingCouple,
@@ -88,12 +113,12 @@ class SettingsCubit extends Cubit<SettingsState> {
         super(SettingsLoaded(user: initialUser)) {
     final coupleId = initialUser.coupleId;
     if (coupleId != null) {
-      _coupleSub = _coupleRepo.watchCouple(coupleId).listen((couple) {
-        final s = state;
-        if (s is SettingsLoaded) {
-          emit(s.copyWith(couple: couple));
-        }
-      });
+      _coupleSub = _coupleRepo.watchCouple(coupleId).listen(
+        _onCouple,
+        onError: (Object e, StackTrace stack) {
+          debugPrint('SettingsCubit couple stream error: $e');
+        },
+      );
     }
   }
 
@@ -103,6 +128,54 @@ class SettingsCubit extends Cubit<SettingsState> {
   final NotificationsRepository _notifRepo;
 
   StreamSubscription<Couple?>? _coupleSub;
+  StreamSubscription<User?>? _partnerSub;
+  String? _watchedPartnerId;
+
+  void _onCouple(Couple? couple) {
+    final s = state;
+    if (s is! SettingsLoaded) return;
+    emit(s.copyWith(couple: couple));
+    _syncPartnerSubscription(couple, s.user.id);
+  }
+
+  /// (Re)subscribes to the partner's user doc whenever the couple's
+  /// composition changes. No-ops when already watching the right uid.
+  void _syncPartnerSubscription(Couple? couple, String selfId) {
+    final partnerId = _resolvePartnerId(couple, selfId);
+
+    if (partnerId == _watchedPartnerId) return;
+
+    unawaited(_partnerSub?.cancel());
+    _partnerSub = null;
+    _watchedPartnerId = partnerId;
+
+    if (partnerId == null) {
+      final s = state;
+      if (s is SettingsLoaded && s.partner != null) {
+        emit(s.clearPartner());
+      }
+      return;
+    }
+
+    _partnerSub = _authRepo.watchUser(partnerId).listen(
+      (partner) {
+        final s = state;
+        if (s is SettingsLoaded) {
+          emit(s.copyWith(partner: partner));
+        }
+      },
+      onError: (Object e, StackTrace stack) {
+        debugPrint('SettingsCubit partner stream error: $e');
+      },
+    );
+  }
+
+  String? _resolvePartnerId(Couple? couple, String selfId) {
+    if (couple == null || !couple.isPaired) return null;
+    if (couple.ownerId == selfId) return couple.partnerId;
+    if (couple.partnerId == selfId) return couple.ownerId;
+    return null;
+  }
 
   Future<Result<void>> updateLanguage(AppLanguage language) async {
     final s = state;
@@ -258,6 +331,7 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   @override
   Future<void> close() async {
+    await _partnerSub?.cancel();
     await _coupleSub?.cancel();
     return super.close();
   }

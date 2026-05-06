@@ -69,11 +69,19 @@ class AuthRepositoryImpl implements AuthRepository {
             controller.add(AuthStateAuthenticated(cached));
           }
 
-          userDataSub = _remote.watchUserData(account.uid).listen((docData) {
-            final user = _buildUser(account, docData);
-            unawaited(_userCache?.write(account.uid, user));
-            controller.add(AuthStateAuthenticated(user));
-          });
+          userDataSub = _remote.watchUserData(account.uid).listen(
+            (docData) {
+              final user = _buildUser(account, docData);
+              unawaited(_userCache?.write(account.uid, user));
+              controller.add(AuthStateAuthenticated(user));
+            },
+            // During sign-out the auth token is revoked before this
+            // subscription is cancelled — Firestore fires one last
+            // permission-denied event that we can safely swallow.
+            onError: (Object e, StackTrace stack) {
+              debugPrint('watchUserData stream error: $e');
+            },
+          );
         });
       }
       ..onCancel = () async {
@@ -138,6 +146,14 @@ class AuthRepositoryImpl implements AuthRepository {
     } on Object catch (e) {
       return Err<void>(UnknownAuthFailure(e));
     }
+  }
+
+  @override
+  Stream<User?> watchUser(String uid) {
+    return _remote.watchUserData(uid).map((data) {
+      if (data == null) return null;
+      return UserModel.fromMap(data, uid);
+    });
   }
 
   /// Builds a [User] from the Firebase auth account + (optional) Firestore

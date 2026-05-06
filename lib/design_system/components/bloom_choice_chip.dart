@@ -2,6 +2,25 @@ import 'package:flutter/material.dart';
 
 import 'package:mycycle/design_system/tokens/tokens.dart';
 
+/// Pill-shaped choice chip — used for filterable selections (mood, symptoms,
+/// languages, etc.).
+///
+/// Visual model: unselected = pebble-toned pill on cream surface; selected =
+/// solid terracotta pill with onPrimary text. No border by default — depth
+/// comes from background tone contrast against the warm scaffold bg.
+///
+/// Pass [tint] to opt into a phase-specific color (e.g.
+/// `BloomColors.phaseFollicular`) for the selected state — useful in the
+/// logging sheet where chips are grouped by category.
+///
+/// Example:
+/// ```dart
+/// BloomChoiceChip(
+///   label: 'Calm',
+///   selected: state.mood == Mood.calm,
+///   onTap: () => cubit.setMood(Mood.calm),
+/// );
+/// ```
 class BloomChoiceChip extends StatelessWidget {
   const BloomChoiceChip({
     required this.label,
@@ -20,11 +39,10 @@ class BloomChoiceChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final accent = tint ?? theme.colorScheme.primary;
-    final bg = selected
-        ? accent.withValues(alpha: 0.16)
-        : theme.colorScheme.surface;
-    final fg =
-        selected ? accent : theme.colorScheme.onSurface.withValues(alpha: 0.8);
+    final bg = selected ? accent : theme.colorScheme.surfaceContainer;
+    final fg = selected
+        ? theme.colorScheme.onPrimary
+        : theme.colorScheme.onSurface;
 
     return GestureDetector(
       onTap: onTap,
@@ -39,17 +57,12 @@ class BloomChoiceChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BloomRadii.pillShape,
-          border: Border.all(
-            color: selected
-                ? accent.withValues(alpha: 0.4)
-                : theme.colorScheme.outline.withValues(alpha: 0.4),
-          ),
         ),
         child: Text(
           label,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: fg,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),

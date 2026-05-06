@@ -12,12 +12,12 @@ Future<SharedPreferences> _prefsWith(Map<String, Object> initial) async {
 
 void main() {
   group('ThemeCubit — hydration', () {
-    test('defaults to ThemeMode.system when no value is stored', () async {
+    test('defaults to ThemeMode.light when no value is stored', () async {
       final prefs = await _prefsWith(<String, Object>{});
 
       final cubit = ThemeCubit(prefs: prefs);
 
-      expect(cubit.state, ThemeMode.system);
+      expect(cubit.state, ThemeMode.light);
     });
 
     test('hydrates from stored value', () async {
@@ -28,12 +28,12 @@ void main() {
       expect(cubit.state, ThemeMode.dark);
     });
 
-    test('falls back to system when stored value is unrecognized', () async {
+    test('falls back to light when stored value is unrecognized', () async {
       final prefs = await _prefsWith(<String, Object>{_key: 'not-a-mode'});
 
       final cubit = ThemeCubit(prefs: prefs);
 
-      expect(cubit.state, ThemeMode.system);
+      expect(cubit.state, ThemeMode.light);
     });
   });
 
@@ -58,40 +58,11 @@ void main() {
       final emitted = <ThemeMode>[];
       final sub = cubit.stream.listen(emitted.add);
 
-      await cubit.setThemeMode(ThemeMode.system);
+      await cubit.setThemeMode(ThemeMode.light);
 
       expect(emitted, isEmpty);
       expect(prefs.getString(_key), isNull);
       await sub.cancel();
-    });
-  });
-
-  group('ThemeCubit — toggleLightDark', () {
-    test('from light emits dark', () async {
-      final prefs = await _prefsWith(<String, Object>{_key: 'light'});
-      final cubit = ThemeCubit(prefs: prefs);
-
-      await cubit.toggleLightDark();
-
-      expect(cubit.state, ThemeMode.dark);
-    });
-
-    test('from dark emits light', () async {
-      final prefs = await _prefsWith(<String, Object>{_key: 'dark'});
-      final cubit = ThemeCubit(prefs: prefs);
-
-      await cubit.toggleLightDark();
-
-      expect(cubit.state, ThemeMode.light);
-    });
-
-    test('from system emits dark', () async {
-      final prefs = await _prefsWith(<String, Object>{});
-      final cubit = ThemeCubit(prefs: prefs);
-
-      await cubit.toggleLightDark();
-
-      expect(cubit.state, ThemeMode.dark);
     });
   });
 }

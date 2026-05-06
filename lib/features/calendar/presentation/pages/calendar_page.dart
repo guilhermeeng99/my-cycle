@@ -132,11 +132,11 @@ class _Legend extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: BloomSpacing.screenEdge,
-        vertical: BloomSpacing.s12,
+        vertical: BloomSpacing.s16,
       ),
       child: Wrap(
-        spacing: BloomSpacing.s12,
-        runSpacing: BloomSpacing.s8,
+        spacing: BloomSpacing.s16,
+        runSpacing: BloomSpacing.s12,
         alignment: WrapAlignment.center,
         children: <Widget>[
           for (final (color, label) in phases)
@@ -170,19 +170,16 @@ class _LegendChip extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.5),
-            shape: BoxShape.circle,
-          ),
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: BloomSpacing.s8),
         Text(
           label,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-            letterSpacing: 0.4,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],

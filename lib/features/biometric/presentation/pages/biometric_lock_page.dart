@@ -46,85 +46,65 @@ class _BiometricLockPageState extends State<BiometricLockPage> {
             state is BiometricLockLocked ? state.remainingAttempts : 0;
 
         return Scaffold(
-          body: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  primary.withValues(alpha: 0.12),
-                  theme.scaffoldBackgroundColor,
-                ],
-                stops: const <double>[0, 0.55],
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: BloomSpacing.screenEdge,
               ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BloomSpacing.screenEdge,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    const Spacer(flex: 2),
-                    Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: <Color>[
-                            primary.withValues(alpha: 0.20),
-                            primary.withValues(alpha: 0.10),
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: Icon(BloomIcons.lock, size: 36, color: primary),
+              child: Column(
+                children: <Widget>[
+                  const Spacer(flex: 2),
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: primary.withValues(alpha: 0.16),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(height: BloomSpacing.s32),
-                    Text(
-                      t.biometric.lockedTitle(app: AppConstants.appName),
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.3,
+                    alignment: Alignment.center,
+                    child: Icon(BloomIcons.lock, size: 36, color: primary),
+                  ),
+                  const SizedBox(height: BloomSpacing.s32),
+                  Text(
+                    t.biometric.lockedTitle(app: AppConstants.appName),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: BloomSpacing.s12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: BloomSpacing.s24,
+                    ),
+                    child: Text(
+                      t.biometric.lockedBody,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        height: 1.45,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: BloomSpacing.s12),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: BloomSpacing.s24,
+                  ),
+                  const Spacer(flex: 3),
+                  BloomPrimaryButton(
+                    label: t.biometric.unlockButton,
+                    icon: BloomIcons.fingerprint,
+                    onPressed: _unlock,
+                  ),
+                  if (remaining > 0 && remaining < 3) ...<Widget>[
+                    const SizedBox(height: BloomSpacing.s16),
+                    Text(
+                      t.biometric.failedAttempts(n: remaining.toString()),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.error,
                       ),
-                      child: Text(
-                        t.biometric.lockedBody,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          height: 1.4,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    const Spacer(flex: 3),
-                    BloomPrimaryButton(
-                      label: t.biometric.unlockButton,
-                      icon: BloomIcons.fingerprint,
-                      onPressed: _unlock,
-                    ),
-                    if (remaining > 0 && remaining < 3) ...<Widget>[
-                      const SizedBox(height: BloomSpacing.s16),
-                      Text(
-                        t.biometric.failedAttempts(n: remaining.toString()),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.error,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    const SizedBox(height: BloomSpacing.s24),
                   ],
-                ),
+                  const SizedBox(height: BloomSpacing.s24),
+                ],
               ),
             ),
           ),

@@ -4,18 +4,22 @@ import 'package:mycycle/app/theme/app_colors.dart';
 import 'package:mycycle/app/theme/app_typography.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
 
-/// Bloom theme builder for MyCycle.
+/// Bloom theme builder for MyCycle — light-only, FocusPomo-tuned.
 ///
 /// Composes color, typography and component themes; each piece lives in a
 /// dedicated file so changes stay focused. Widgets should consume
 /// `Theme.of(context).colorScheme.*` and `Theme.of(context).textTheme.*`
 /// rather than reaching for raw tokens.
+///
+/// Visual direction: warm beige scaffold + cream cards, terracotta accent
+/// reserved for primary CTAs and the active state. Depth comes from
+/// background tone contrast, not shadows — `cardTheme.elevation` is 0 by
+/// default and primary buttons use solid fills (no gradients).
 abstract final class AppTheme {
   static ThemeData light() => _build(AppColors.light);
-  static ThemeData dark() => _build(AppColors.dark);
 
   static ThemeData _build(ColorScheme scheme) {
-    final scaffoldBg = AppColors.scaffoldBackground(scheme.brightness);
+    final scaffoldBg = AppColors.scaffoldBackground();
     final textTheme = AppTypography.themeFor(scheme.onSurface);
 
     return ThemeData(
@@ -44,22 +48,27 @@ abstract final class AppTheme {
           foregroundColor: scheme.onPrimary,
           disabledBackgroundColor: scheme.primary.withValues(alpha: 0.4),
           disabledForegroundColor: scheme.onPrimary.withValues(alpha: 0.8),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          minimumSize: const Size.fromHeight(52),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          minimumSize: const Size.fromHeight(56),
           shape: const RoundedRectangleBorder(borderRadius: BloomRadii.button),
-          elevation: 2,
-          shadowColor: scheme.shadow.withValues(alpha: 0.2),
-          textStyle: BloomTypography.body.copyWith(fontWeight: FontWeight.w600),
+          elevation: 0,
+          textStyle: BloomTypography.body.copyWith(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: scheme.onSurface,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          minimumSize: const Size.fromHeight(52),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          minimumSize: const Size.fromHeight(56),
           side: BorderSide(color: scheme.outline),
           shape: const RoundedRectangleBorder(borderRadius: BloomRadii.button),
-          textStyle: BloomTypography.body.copyWith(fontWeight: FontWeight.w600),
+          textStyle: BloomTypography.body.copyWith(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -67,7 +76,7 @@ abstract final class AppTheme {
           foregroundColor: scheme.primary,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: const RoundedRectangleBorder(borderRadius: BloomRadii.button),
-          textStyle: BloomTypography.body.copyWith(fontWeight: FontWeight.w500),
+          textStyle: BloomTypography.body.copyWith(fontWeight: FontWeight.w600),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

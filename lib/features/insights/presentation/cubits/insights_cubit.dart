@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mycycle/core/clock/clock.dart';
@@ -27,10 +28,14 @@ class InsightsCubit extends Cubit<InsightsState> {
        _coupleId = coupleId,
        _clock = clock,
        super(const InsightsLoading()) {
-    _coupleSub = _coupleRepository.watchCouple(_coupleId).listen(_onCouple);
-    _cyclesSub = _cycleRepository
-        .watchRecentCycles(_coupleId)
-        .listen(_onCycles);
+    _coupleSub = _coupleRepository.watchCouple(_coupleId).listen(
+      _onCouple,
+      onError: _onStreamError,
+    );
+    _cyclesSub = _cycleRepository.watchRecentCycles(_coupleId).listen(
+      _onCycles,
+      onError: _onStreamError,
+    );
   }
 
   final CycleRepository _cycleRepository;
@@ -52,6 +57,13 @@ class InsightsCubit extends Cubit<InsightsState> {
   void _onCycles(List<Cycle> cycles) {
     _cycles = cycles;
     _recompute();
+  }
+
+  /// Permission errors are expected during sign-out — Firestore listeners
+  /// fire one last event after the auth token is revoked. Swallow so the
+  /// exception doesn't bubble up as unhandled.
+  void _onStreamError(Object e, StackTrace stack) {
+    debugPrint('InsightsCubit stream error: $e');
   }
 
   void _recompute() {

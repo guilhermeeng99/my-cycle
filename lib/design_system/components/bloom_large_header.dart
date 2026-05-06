@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'package:mycycle/design_system/tokens/tokens.dart';
 
+/// Page-level header — the primary screen title (e.g. "Today", "Settings").
+///
+/// FocusPomo-tuned: Nunito 700 in warm brown ink, no editorial letter-spacing.
+/// Sits flush against the scaffold background with breathing room above
+/// (matches the FocusPomo "Focus Session Timeline" heading weight).
+///
+/// Example:
+/// ```dart
+/// BloomLargeHeader(
+///   title: t.today.title,
+///   subtitle: t.today.subtitle,
+/// );
+/// ```
 class BloomLargeHeader extends StatelessWidget {
   const BloomLargeHeader({
     required this.title,
@@ -20,9 +33,9 @@ class BloomLargeHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         BloomSpacing.screenEdge,
-        BloomSpacing.s16,
-        BloomSpacing.screenEdge,
         BloomSpacing.s24,
+        BloomSpacing.screenEdge,
+        BloomSpacing.s20,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -34,12 +47,12 @@ class BloomLargeHeader extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.headlineLarge?.copyWith(
+                    color: theme.colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
                   ),
                 ),
                 if (subtitle != null) ...<Widget>[
-                  const SizedBox(height: BloomSpacing.s4),
+                  const SizedBox(height: BloomSpacing.s8),
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(

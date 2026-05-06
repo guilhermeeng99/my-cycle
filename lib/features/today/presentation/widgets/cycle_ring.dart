@@ -7,14 +7,19 @@ import 'package:mycycle/design_system/tokens/tokens.dart';
 import 'package:mycycle/features/cycle/domain/entities/cycle_phase.dart';
 import 'package:mycycle/gen/i18n/strings.g.dart';
 
+/// Animated circular cycle ring — the daily hero on Today.
+///
+/// FocusPomo-tuned: smaller default footprint (200 instead of 240) so it
+/// reads as a quiet anchor rather than dominating the screen, and label
+/// styling drops the editorial letter-spacing now that we're on Nunito.
 class CycleRing extends StatefulWidget {
   const CycleRing({
     required this.dayN,
     required this.cycleLengthEstimate,
     required this.phase,
     super.key,
-    this.size = 240,
-    this.strokeWidth = 14,
+    this.size = 200,
+    this.strokeWidth = 12,
   });
 
   final int dayN;
@@ -70,7 +75,7 @@ class _CycleRingState extends State<CycleRing>
                 progress: progress,
                 phaseColor: phaseColor,
                 trackColor:
-                    theme.colorScheme.outline.withValues(alpha: 0.35),
+                    theme.colorScheme.outline.withValues(alpha: 0.4),
                 strokeWidth: widget.strokeWidth,
               ),
               child: Center(
@@ -86,7 +91,7 @@ class _CycleRingState extends State<CycleRing>
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: phaseColor,
                           letterSpacing: 1.2,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: BloomSpacing.s4),

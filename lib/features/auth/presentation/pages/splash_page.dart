@@ -11,36 +11,16 @@ class SplashPage extends StatelessWidget {
     final primary = theme.colorScheme.primary;
 
     return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: <Color>[
-              primary.withValues(alpha: 0.10),
-              theme.scaffoldBackgroundColor,
-            ],
-            stops: const <double>[0, 0.55],
+      body: Center(
+        child: Container(
+          width: 88,
+          height: 88,
+          decoration: BoxDecoration(
+            color: primary.withValues(alpha: 0.16),
+            shape: BoxShape.circle,
           ),
-        ),
-        child: Center(
-          child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  primary.withValues(alpha: 0.18),
-                  primary.withValues(alpha: 0.08),
-                ],
-              ),
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Icon(BloomIcons.heart, color: primary, size: 32),
-          ),
+          alignment: Alignment.center,
+          child: Icon(BloomIcons.heart, color: primary, size: 36),
         ),
       ),
     );

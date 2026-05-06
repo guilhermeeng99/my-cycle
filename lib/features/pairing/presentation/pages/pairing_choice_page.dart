@@ -67,27 +67,16 @@ class _ChoiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tint = theme.colorScheme.primary;
+    final bg = accent
+        ? theme.colorScheme.primaryContainer
+        : theme.colorScheme.surface;
     return Material(
-      color: Colors.transparent,
+      color: bg,
       borderRadius: BloomRadii.card,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: accent
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[
-                      tint.withValues(alpha: 0.12),
-                      tint.withValues(alpha: 0.04),
-                    ],
-                  )
-                : null,
-            color: accent ? null : theme.colorScheme.surface,
-            borderRadius: BloomRadii.card,
-          ),
+        child: Padding(
           padding: const EdgeInsets.all(BloomSpacing.s20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,11 +85,16 @@ class _ChoiceCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: tint.withValues(alpha: 0.16),
+                  color:
+                      accent ? tint : tint.withValues(alpha: 0.16),
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: Icon(icon, size: 18, color: tint),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: accent ? theme.colorScheme.onPrimary : tint,
+                ),
               ),
               const SizedBox(width: BloomSpacing.s16),
               Expanded(
@@ -110,7 +104,8 @@ class _ChoiceCard extends StatelessWidget {
                     Text(
                       title,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: BloomSpacing.s4),
@@ -118,7 +113,7 @@ class _ChoiceCard extends StatelessWidget {
                       body,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
-                        height: 1.4,
+                        height: 1.45,
                       ),
                     ),
                   ],

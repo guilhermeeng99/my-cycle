@@ -1,6 +1,12 @@
 # Theme — Specification
 
-> Status: draft v1 · Owner: @guiga · Last updated: 2026-05-03
+> Status: draft v1 · Owner: @guiga · Last updated: 2026-05-06
+>
+> **Visual direction:** see `specs/redesign_focuspomo.md` for the active
+> redesign brief (warm beige + terracotta + rounded sans, FocusPomo-inspired).
+> If Decision B in that brief lands as **drop dark mode**, this cubit becomes
+> a no-op kept for storage compatibility — `MaterialApp.themeMode` is hard-pinned
+> to `ThemeMode.light` and the Settings → Appearance section is removed.
 
 Owns app-wide light/dark/system theme mode. Persists the user's choice across cold starts.
 

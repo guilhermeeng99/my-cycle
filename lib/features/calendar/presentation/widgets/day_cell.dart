@@ -67,7 +67,7 @@ class DayCell extends StatelessWidget {
   Widget _phaseTint(Color phaseColor) {
     return Container(
       decoration: BoxDecoration(
-        color: phaseColor.withValues(alpha: 0.10),
+        color: phaseColor.withValues(alpha: 0.18),
         shape: BoxShape.circle,
       ),
     );
@@ -77,7 +77,7 @@ class DayCell extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: theme.colorScheme.primary, width: 1.5),
+        border: Border.all(color: theme.colorScheme.primary, width: 2),
       ),
     );
   }

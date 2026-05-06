@@ -2,6 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:mycycle/design_system/tokens/tokens.dart';
 
+/// Primary CTA button — solid terracotta pill, FocusPomo-style.
+///
+/// No gradient, no shadow — depth comes from the color contrast against
+/// the warm bege scaffold. The button always stretches to the available
+/// width (`minWidth: double.infinity`) so it sits comfortably inside a
+/// padded column.
+///
+/// Example:
+/// ```dart
+/// BloomPrimaryButton(
+///   label: 'Next',
+///   onPressed: () => cubit.advance(),
+/// );
+/// ```
 class BloomPrimaryButton extends StatelessWidget {
   const BloomPrimaryButton({
     required this.label,
@@ -21,61 +35,45 @@ class BloomPrimaryButton extends StatelessWidget {
     final theme = Theme.of(context);
     final disabled = onPressed == null || loading;
     final base = theme.colorScheme.primary;
+    final fg = theme.colorScheme.onPrimary;
 
     return Material(
       borderRadius: BloomRadii.button,
       clipBehavior: Clip.antiAlias,
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              if (disabled) base.withValues(alpha: 0.5) else base,
-              if (disabled)
-                base.withValues(alpha: 0.4)
-              else
-                base.withValues(alpha: 0.85),
-            ],
+      color: disabled ? base.withValues(alpha: 0.5) : base,
+      child: InkWell(
+        onTap: disabled ? null : onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BloomSpacing.s24,
+            vertical: BloomSpacing.s20,
           ),
-          borderRadius: BloomRadii.button,
-        ),
-        child: InkWell(
-          onTap: disabled ? null : onPressed,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BloomSpacing.s24,
-              vertical: BloomSpacing.s16,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (loading)
-                  SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        theme.colorScheme.onPrimary,
-                      ),
-                    ),
-                  )
-                else if (icon != null) ...<Widget>[
-                  Icon(icon, size: 16, color: theme.colorScheme.onPrimary),
-                  const SizedBox(width: BloomSpacing.s12),
-                ],
-                if (!loading)
-                  Text(
-                    label,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if (loading)
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(fg),
                   ),
+                )
+              else if (icon != null) ...<Widget>[
+                Icon(icon, size: 18, color: fg),
+                const SizedBox(width: BloomSpacing.s8),
               ],
-            ),
+              if (!loading)
+                Text(
+                  label,
+                  style: BloomTypography.body.copyWith(
+                    color: fg,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+            ],
           ),
         ),
       ),
@@ -83,6 +81,7 @@ class BloomPrimaryButton extends StatelessWidget {
   }
 }
 
+/// Secondary CTA button — cream surface, brown ink, pebble outline.
 class BloomSecondaryButton extends StatelessWidget {
   const BloomSecondaryButton({
     required this.label,
@@ -104,23 +103,28 @@ class BloomSecondaryButton extends StatelessWidget {
       color: theme.colorScheme.surface,
       child: InkWell(
         onTap: onPressed,
-        child: Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BloomRadii.button,
+            border: Border.all(color: theme.colorScheme.outline),
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: BloomSpacing.s24,
-            vertical: BloomSpacing.s16,
+            vertical: BloomSpacing.s20,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (icon != null) ...<Widget>[
-                Icon(icon, size: 16, color: theme.colorScheme.onSurface),
-                const SizedBox(width: BloomSpacing.s12),
+                Icon(icon, size: 18, color: theme.colorScheme.onSurface),
+                const SizedBox(width: BloomSpacing.s8),
               ],
               Text(
                 label,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: BloomTypography.body.copyWith(
                   color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
                 ),
               ),
             ],

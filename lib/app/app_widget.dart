@@ -7,7 +7,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mycycle/app/di/injection_container.dart';
 import 'package:mycycle/app/router/app_router.dart';
 import 'package:mycycle/app/theme/app_theme.dart';
-import 'package:mycycle/app/theme/theme_cubit.dart';
 import 'package:mycycle/core/constants/app_constants.dart';
 import 'package:mycycle/core/entities/user.dart';
 import 'package:mycycle/features/auth/domain/auth_state.dart';
@@ -79,30 +78,24 @@ class _MyCycleAppState extends State<MyCycleApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: <BlocProvider<Object?>>[
-        BlocProvider<ThemeCubit>.value(value: getIt<ThemeCubit>()),
         BlocProvider<AuthCubit>.value(value: getIt<AuthCubit>()),
         BlocProvider<StartupCubit>.value(value: getIt<StartupCubit>()),
         BlocProvider<BiometricLockCubit>.value(
           value: getIt<BiometricLockCubit>(),
         ),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (context, themeMode) {
-          return MaterialApp.router(
-            title: AppConstants.appName,
-            theme: AppTheme.light(),
-            darkTheme: AppTheme.dark(),
-            themeMode: themeMode,
-            locale: TranslationProvider.of(context).flutterLocale,
-            supportedLocales: AppLocaleUtils.supportedLocales,
-            localizationsDelegates: const <LocalizationsDelegate<Object>>[
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            routerConfig: _router.router,
-          );
-        },
+      child: MaterialApp.router(
+        title: AppConstants.appName,
+        theme: AppTheme.light(),
+        themeMode: ThemeMode.light,
+        locale: TranslationProvider.of(context).flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: const <LocalizationsDelegate<Object>>[
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        routerConfig: _router.router,
       ),
     );
   }

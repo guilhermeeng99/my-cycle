@@ -3,6 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:mycycle/design_system/icons/bloom_icons.dart';
 import 'package:mycycle/design_system/tokens/tokens.dart';
 
+/// Single row inside a `BloomGroupedList` — circular icon badge on the
+/// left, title (+ optional subtitle), value/chevron/trailing on the right.
+/// Optional `bottom` slot embeds a control (e.g. a `BloomSegmented`).
+///
+/// FocusPomo-tuned: icon badges are circular and 40×40 (matches the email /
+/// Instagram tiles in the FocusPomo settings page). Tap targets are sized
+/// for thumb interaction (~56pt min height).
+///
+/// When [solidIcon] is true the badge fills with the tint color and the
+/// icon renders in `onPrimary` (white-on-color, like Email/Instagram in
+/// FocusPomo). When false (default), the badge uses a soft tinted bg with
+/// the icon in the tint color — calmer, the right call for most rows.
+///
+/// Example:
+/// ```dart
+/// BloomSettingsTile(
+///   icon: BloomIcons.bell,
+///   title: t.settings.notificationsTitle,
+///   subtitle: t.settings.notificationsBody,
+///   trailing: Switch(value: enabled, onChanged: cubit.setNotifications),
+/// )
+/// ```
 class BloomSettingsTile extends StatelessWidget {
   const BloomSettingsTile({
     required this.icon,
@@ -13,6 +35,7 @@ class BloomSettingsTile extends StatelessWidget {
     this.value,
     this.onTap,
     this.iconTint,
+    this.solidIcon = false,
     this.destructive = false,
     super.key,
   });
@@ -25,6 +48,7 @@ class BloomSettingsTile extends StatelessWidget {
   final String? value;
   final VoidCallback? onTap;
   final Color? iconTint;
+  final bool solidIcon;
   final bool destructive;
 
   @override
@@ -41,16 +65,18 @@ class BloomSettingsTile extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: BloomSpacing.s16,
-            vertical: BloomSpacing.s12,
+            vertical: BloomSpacing.s16,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  _IconChip(
+                  _IconBadge(
                     icon: icon,
                     tint: iconTint ?? theme.colorScheme.primary,
+                    solid: solidIcon,
+                    onTint: theme.colorScheme.onPrimary,
                   ),
                   const SizedBox(width: BloomSpacing.s16),
                   Expanded(
@@ -61,7 +87,7 @@ class BloomSettingsTile extends StatelessWidget {
                           title,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: titleColor,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         if (subtitle != null) ...<Widget>[
@@ -87,7 +113,7 @@ class BloomSettingsTile extends StatelessWidget {
               if (bottom != null) ...<Widget>[
                 const SizedBox(height: BloomSpacing.s12),
                 Padding(
-                  padding: const EdgeInsets.only(left: 52),
+                  padding: const EdgeInsets.only(left: 56),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: bottom,
@@ -102,21 +128,31 @@ class BloomSettingsTile extends StatelessWidget {
   }
 }
 
-class _IconChip extends StatelessWidget {
-  const _IconChip({required this.icon, required this.tint});
+class _IconBadge extends StatelessWidget {
+  const _IconBadge({
+    required this.icon,
+    required this.tint,
+    required this.solid,
+    required this.onTint,
+  });
+
   final IconData icon;
   final Color tint;
+  final bool solid;
+  final Color onTint;
 
   @override
   Widget build(BuildContext context) {
+    final bg = solid ? tint : tint.withValues(alpha: 0.16);
+    final fg = solid ? onTint : tint;
     return Container(
-      width: 36,
-      height: 36,
+      width: 40,
+      height: 40,
       decoration: BoxDecoration(
-        color: tint.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(BloomRadii.md),
+        color: bg,
+        shape: BoxShape.circle,
       ),
-      child: Icon(icon, size: 16, color: tint),
+      child: Icon(icon, size: 18, color: fg),
     );
   }
 }
@@ -142,6 +178,7 @@ class _Trailing extends StatelessWidget {
           value!,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
           ),
         ),
       );

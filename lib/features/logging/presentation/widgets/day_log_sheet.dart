@@ -111,16 +111,15 @@ class _DayLogSheetState extends State<DayLogSheet> {
     if (widget.isPartner) {
       return SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(
-          BloomSpacing.s24,
+          BloomSpacing.screenEdge,
           BloomSpacing.s12,
-          BloomSpacing.s24,
+          BloomSpacing.screenEdge,
           BloomSpacing.s24,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _Section(label: t.log.partnerNoteTitle),
-            const SizedBox(height: BloomSpacing.s8),
+            BloomGroupHeader(t.log.partnerNoteTitle),
             TextField(
               controller: _noteCtrl,
               maxLines: 4,
@@ -135,43 +134,41 @@ class _DayLogSheetState extends State<DayLogSheet> {
     }
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
-        BloomSpacing.s24,
+        BloomSpacing.screenEdge,
         BloomSpacing.s12,
-        BloomSpacing.s24,
+        BloomSpacing.screenEdge,
         BloomSpacing.s24,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _Section(label: t.log.flowTitle),
+          BloomGroupHeader(t.log.flowTitle),
           _FlowChips(
             value: _flow,
             onChanged: (v) => setState(() => _flow = v),
           ),
           const SizedBox(height: BloomSpacing.sectionGap),
-          _Section(label: t.log.moodTitle),
+          BloomGroupHeader(t.log.moodTitle),
           _MoodChips(
             value: _mood,
             onChanged: (v) => setState(() => _mood = v),
           ),
           const SizedBox(height: BloomSpacing.sectionGap),
-          _Section(label: t.log.symptomsTitle),
+          BloomGroupHeader(t.log.symptomsTitle),
           _SymptomsChips(
             value: _symptoms,
             onChanged: (next) => setState(() => _symptoms = next),
           ),
           const SizedBox(height: BloomSpacing.sectionGap),
-          _Section(label: t.log.noteTitle),
-          const SizedBox(height: BloomSpacing.s8),
+          BloomGroupHeader(t.log.noteTitle),
           TextField(
             controller: _noteCtrl,
             maxLines: 3,
             maxLength: 500,
             decoration: InputDecoration(hintText: t.log.notePlaceholder),
           ),
-          const SizedBox(height: BloomSpacing.s16),
-          _Section(label: t.log.cycleMarkersTitle),
-          const SizedBox(height: BloomSpacing.s8),
+          const SizedBox(height: BloomSpacing.sectionGap),
+          BloomGroupHeader(t.log.cycleMarkersTitle),
           BloomGroupedList(
             children: <Widget>[
               BloomSettingsTile(
@@ -273,8 +270,8 @@ class _Header extends StatelessWidget {
                 Text(
                   t.log.title,
                   style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: BloomSpacing.s4),
@@ -331,24 +328,6 @@ class _Footer extends StatelessWidget {
         label: t.common.save,
         loading: saving,
         onPressed: onSave,
-      ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Text(
-      label.toUpperCase(),
-      style: theme.textTheme.labelSmall?.copyWith(
-        color: theme.colorScheme.onSurfaceVariant,
-        letterSpacing: 1.1,
-        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -450,7 +429,7 @@ class _SymptomsChips extends StatelessWidget {
               (s) => BloomChoiceChip(
                 label: label(s),
                 selected: value.contains(s),
-                tint: BloomColors.phaseLuteal,
+                tint: BloomColors.plum,
                 onTap: () {
                   final next = {...value};
                   if (next.contains(s)) {

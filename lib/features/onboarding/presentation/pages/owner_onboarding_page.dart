@@ -142,14 +142,7 @@ class _WelcomeStep extends StatelessWidget {
             width: 96,
             height: 96,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  primary.withValues(alpha: 0.18),
-                  primary.withValues(alpha: 0.08),
-                ],
-              ),
+              color: primary.withValues(alpha: 0.16),
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
@@ -160,8 +153,8 @@ class _WelcomeStep extends StatelessWidget {
         Text(
           t.onboarding.welcomeTitle,
           style: theme.textTheme.displaySmall?.copyWith(
+            color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
           ),
           textAlign: TextAlign.center,
         ),
@@ -173,7 +166,7 @@ class _WelcomeStep extends StatelessWidget {
             t.onboarding.welcomeBody,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
-              height: 1.4,
+              height: 1.45,
             ),
             textAlign: TextAlign.center,
           ),
@@ -205,8 +198,8 @@ class _StepHeader extends StatelessWidget {
           Text(
             title,
             style: theme.textTheme.headlineMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w700,
-              letterSpacing: -0.4,
             ),
           ),
           const SizedBox(height: BloomSpacing.s8),
@@ -214,7 +207,7 @@ class _StepHeader extends StatelessWidget {
             body,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
-              height: 1.4,
+              height: 1.45,
             ),
           ),
         ],
@@ -342,7 +335,6 @@ class _CycleLengthStep extends StatelessWidget {
             style: theme.textTheme.displayLarge?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.w700,
-              letterSpacing: -1,
             ),
           ),
         ),

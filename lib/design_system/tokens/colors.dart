@@ -1,50 +1,84 @@
 import 'package:flutter/material.dart';
 
-/// Bloom raw color tokens.
+/// Bloom raw color tokens — FocusPomo-inspired warm palette.
 ///
-/// Light/dark surface and ink tokens are split with `night*` and `*Dark`
-/// suffixes; the mapping into Material 3 [ColorScheme] lives in
-/// `app/theme/app_theme.dart`. Direct usage in widgets is discouraged —
+/// Direction: warm beige surfaces, terracotta accent, sage/honey supporting
+/// tones. Tokens keep historical names (rose, plum, sage, cream...) so
+/// downstream consumers don't break, but values were re-tuned to match
+/// the FocusPomo aesthetic. New `terracotta*`, `bege*`, `pebble*` aliases
+/// are also exposed for new code that wants intent-revealing names.
+///
+/// Light-only by design — see `specs/redesign_focuspomo.md` (Decision B1).
+/// The mapping into Material 3 [ColorScheme] lives in
+/// `app/theme/app_colors.dart`. Direct usage in widgets is discouraged —
 /// prefer `Theme.of(context).colorScheme.*`.
 abstract final class BloomColors {
-  // Brand
-  static const Color rose = Color(0xFFC9637E);
-  static const Color roseDeep = Color(0xFFA14B63);
-  static const Color roseDark = Color(0xFFD87E94);
-  static const Color plum = Color(0xFF6B4E6F);
-  static const Color honey = Color(0xFFD9A86C);
-  static const Color sage = Color(0xFF8FA88E);
+  // ── Brand accent (terracotta / coral) ──────────────────────────────────
+  /// Primary brand accent. Used for CTAs and the selected-day pill.
+  static const Color rose = Color(0xFFD9634F);
+  static const Color terracotta = rose;
 
-  // Surfaces — light
-  static const Color cream = Color(0xFFFAF5F2);
-  static const Color petalMist = Color(0xFFFFFFFF);
-  static const Color petalSoft = Color(0xFFF4E5E1);
-  static const Color pearlEdge = Color(0xFFEFE4DF);
+  /// Pressed / deep variant of the primary accent.
+  static const Color roseDeep = Color(0xFFB84A38);
+  static const Color terracottaDeep = roseDeep;
 
-  // Surfaces — dark
-  static const Color nightBg = Color(0xFF1A1416);
-  static const Color nightSurface = Color(0xFF241D1F);
-  static const Color nightSurfaceAlt = Color(0xFF2E2528);
-  static const Color nightBorder = Color(0xFF3A3033);
+  /// Soft container tint used as `primaryContainer`.
+  static const Color petalSoft = Color(0xFFF5DDD2);
+  static const Color terracottaSoft = petalSoft;
 
-  // Text — light
-  static const Color ink = Color(0xFF3D2E2C);
-  static const Color inkSoft = Color(0xFF6B5856);
-  static const Color whisperGray = Color(0xFF998B89);
+  // ── Supporting tones ───────────────────────────────────────────────────
+  /// Secondary accent. Warm cocoa brown.
+  static const Color plum = Color(0xFF8C5A45);
 
-  // Text — dark
-  static const Color inkDark = Color(0xFFF2E8E5);
-  static const Color inkDarkSoft = Color(0xFFC2B5B2);
+  /// Honey / amber — used as warning tone and medium-confidence label.
+  static const Color honey = Color(0xFFE5C97D);
 
-  // Cycle phases (designed to read on both light and dark surfaces)
-  static const Color phaseMenstrual = Color(0xFFB8485A);
-  static const Color phaseFollicular = Color(0xFFE8A87C);
-  static const Color phaseOvulation = Color(0xFF8FA88E);
-  static const Color phaseLuteal = Color(0xFFA89BBF);
+  /// Sage green — tertiary tone, ovulation phase, high-confidence label.
+  static const Color sage = Color(0xFF7BC57E);
 
-  // Semantic
-  static const Color success = Color(0xFF7BA87B);
-  static const Color warning = Color(0xFFD9A86C);
+  // ── Surfaces (light-only) ──────────────────────────────────────────────
+  /// Outer scaffold background — the warm bege.
+  static const Color cream = Color(0xFFF0E6D9);
+  static const Color bege = cream;
+
+  /// Card / surface — the slightly lighter inner cream.
+  static const Color petalMist = Color(0xFFFAF1E6);
+  static const Color surface = petalMist;
+
+  /// Hairline edges and subtle dividers.
+  static const Color pearlEdge = Color(0xFFDCD0BE);
+  static const Color pebbleEdge = pearlEdge;
+
+  /// Pebble — used for unselected pills, low-emphasis chips, neutral
+  /// section backgrounds. Slightly darker than the inner cream.
+  static const Color pebble = Color(0xFFE8DECF);
+
+  // ── Ink (text) ─────────────────────────────────────────────────────────
+  /// Primary text color — warm deep brown, never pure black.
+  static const Color ink = Color(0xFF3C332C);
+
+  /// Secondary text color.
+  static const Color inkSoft = Color(0xFF8C7F73);
+
+  /// Tertiary / label / placeholder text.
+  static const Color whisperGray = Color(0xFFA89E94);
+
+  // ── Cycle phases ───────────────────────────────────────────────────────
+  /// Period / menstrual phase — unified with the brand terracotta.
+  static const Color phaseMenstrual = Color(0xFFD9634F);
+
+  /// Follicular phase — warm orange.
+  static const Color phaseFollicular = Color(0xFFE68A4A);
+
+  /// Ovulation / fertile window — sage green (matches FocusPomo "Focus").
+  static const Color phaseOvulation = Color(0xFF7BC57E);
+
+  /// Luteal phase — warm muted yellow (matches FocusPomo "Fitness").
+  static const Color phaseLuteal = Color(0xFFE5C97D);
+
+  // ── Semantic ───────────────────────────────────────────────────────────
+  static const Color success = Color(0xFF7BC57E);
+  static const Color warning = Color(0xFFE5C97D);
   static const Color error = Color(0xFFC5566B);
   static const Color info = Color(0xFF8FA1B8);
 }

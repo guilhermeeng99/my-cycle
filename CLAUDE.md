@@ -1,6 +1,6 @@
 # MyCycle — Project Conventions
 
-A privacy-first menstrual cycle tracker built with Flutter.
+A menstrual cycle tracker built with Flutter.
 Personal use, Android-only deployment, portfolio-grade engineering.
 
 ---

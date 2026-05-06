@@ -34,6 +34,9 @@ void main() {
     when(
       () => coupleRepo.watchCouple(any<String>()),
     ).thenAnswer((_) => Stream<dynamic>.value(CoupleFactory.paired()).cast());
+    when(
+      () => authRepo.watchUser(any<String>()),
+    ).thenAnswer((_) => const Stream<User?>.empty());
   });
 
   SettingsCubit build(User user) => SettingsCubit(

@@ -30,78 +30,57 @@ class _StartupPageState extends State<StartupPage> {
     final primary = theme.colorScheme.primary;
 
     return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: <Color>[
-              primary.withValues(alpha: 0.10),
-              theme.scaffoldBackgroundColor,
-            ],
-            stops: const <double>[0, 0.55],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: BloomSpacing.screenEdge,
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: BloomSpacing.screenEdge,
-            ),
-            child: Column(
-              children: <Widget>[
-                const Spacer(flex: 3),
-                Container(
-                  width: 88,
-                  height: 88,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: <Color>[
-                        primary.withValues(alpha: 0.18),
-                        primary.withValues(alpha: 0.08),
-                      ],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(BloomIcons.heart, color: primary, size: 34),
+          child: Column(
+            children: <Widget>[
+              const Spacer(flex: 3),
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  color: primary.withValues(alpha: 0.16),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: BloomSpacing.s24),
-                Text(
-                  AppConstants.appName,
-                  style: theme.textTheme.displaySmall?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
-                  ),
-                  textAlign: TextAlign.center,
+                alignment: Alignment.center,
+                child: Icon(BloomIcons.heart, color: primary, size: 36),
+              ),
+              const SizedBox(height: BloomSpacing.s24),
+              Text(
+                AppConstants.appName,
+                style: theme.textTheme.displaySmall?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
                 ),
-                const Spacer(flex: 2),
-                BlocBuilder<StartupCubit, StartupState>(
-                  builder: (context, state) {
-                    final progress = state is StartupLoading
-                        ? state.progress
-                        : null;
-                    return SizedBox(
-                      width: 96,
-                      child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(BloomRadii.pill),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 3,
-                          backgroundColor: theme.colorScheme.outline
-                              .withValues(alpha: 0.3),
-                          valueColor: AlwaysStoppedAnimation<Color>(primary),
-                        ),
+                textAlign: TextAlign.center,
+              ),
+              const Spacer(flex: 2),
+              BlocBuilder<StartupCubit, StartupState>(
+                builder: (context, state) {
+                  final progress = state is StartupLoading
+                      ? state.progress
+                      : null;
+                  return SizedBox(
+                    width: 96,
+                    child: ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(BloomRadii.pill),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 4,
+                        backgroundColor: theme.colorScheme.outline
+                            .withValues(alpha: 0.4),
+                        valueColor: AlwaysStoppedAnimation<Color>(primary),
                       ),
-                    );
-                  },
-                ),
-                const Spacer(flex: 3),
-              ],
-            ),
+                    ),
+                  );
+                },
+              ),
+              const Spacer(flex: 3),
+            ],
           ),
         ),
       ),

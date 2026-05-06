@@ -87,7 +87,7 @@ class _NavCircle extends StatelessWidget {
             padding: const EdgeInsets.all(BloomSpacing.s12),
             child: Icon(
               icon,
-              size: 12,
+              size: 14,
               color: theme.colorScheme.onSurface,
             ),
           ),
@@ -106,21 +106,21 @@ class _TodayPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Material(
-      color: theme.colorScheme.primary.withValues(alpha: 0.14),
+      color: theme.colorScheme.primary,
       borderRadius: BloomRadii.pillShape,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: BloomSpacing.s12,
+            horizontal: BloomSpacing.s16,
             vertical: BloomSpacing.s8,
           ),
           child: Text(
             label,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),

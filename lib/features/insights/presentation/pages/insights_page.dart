@@ -54,21 +54,22 @@ class _EmptyState extends StatelessWidget {
               children: <Widget>[
                 const Spacer(flex: 2),
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
-                    color: primary.withValues(alpha: 0.12),
+                    color: primary.withValues(alpha: 0.16),
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child:
-                      Icon(BloomIcons.sparkle, size: 32, color: primary),
+                      Icon(BloomIcons.sparkle, size: 36, color: primary),
                 ),
                 const SizedBox(height: BloomSpacing.s24),
                 Text(
                   t.insights.emptyTitle,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -81,7 +82,7 @@ class _EmptyState extends StatelessWidget {
                     t.insights.emptyBody,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
-                      height: 1.4,
+                      height: 1.45,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -105,6 +106,7 @@ class _LoadedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+    final theme = Theme.of(context);
     return ListView(
       padding: const EdgeInsets.only(bottom: 140),
       children: <Widget>[
@@ -117,12 +119,15 @@ class _LoadedBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (state.prediction != null) ...<Widget>[
+                BloomGroupHeader(t.insights.nextPredictionTitle),
                 _NextPredictionCard(prediction: state.prediction!),
-                const SizedBox(height: BloomSpacing.s16),
+                const SizedBox(height: BloomSpacing.sectionGap),
               ],
+              BloomGroupHeader(t.insights.averagesTitle),
               _AveragesCard(state: state),
               if (state.regularity != null) ...<Widget>[
-                const SizedBox(height: BloomSpacing.s16),
+                const SizedBox(height: BloomSpacing.sectionGap),
+                BloomGroupHeader(t.insights.regularityTitle),
                 _RegularityCard(
                   regularity: state.regularity!,
                   sampleSize: state.regularitySampleSize,
@@ -132,8 +137,8 @@ class _LoadedBody extends StatelessWidget {
               Center(
                 child: Text(
                   t.insights.sampleSize(n: state.totalTrackedCycles.toString()),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -141,32 +146,6 @@ class _LoadedBody extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _SectionHeading extends StatelessWidget {
-  const _SectionHeading({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        BloomSpacing.s4,
-        0,
-        BloomSpacing.s4,
-        BloomSpacing.s8,
-      ),
-      child: Text(
-        label.toUpperCase(),
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-          letterSpacing: 1.1,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
     );
   }
 }
@@ -179,7 +158,6 @@ class _NextPredictionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
     final locale = Localizations.localeOf(context).toString();
     final fmt = DateFormat.MMMd(locale);
 
@@ -198,68 +176,62 @@ class _NextPredictionCard extends StatelessWidget {
       ),
     };
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return BloomSectionCard(
       children: <Widget>[
-        _SectionHeading(label: t.insights.nextPredictionTitle),
-        Container(
-          padding: const EdgeInsets.all(BloomSpacing.s20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[
-                primary.withValues(alpha: 0.10),
-                primary.withValues(alpha: 0.04),
-              ],
-            ),
-            borderRadius: BloomRadii.card,
+        Text(
+          t.insights.nextPredictionBody(
+            from: fmt.format(prediction.predictedNextStart),
+            to: fmt.format(prediction.predictedNextStartRangeEnd),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                t.insights.nextPredictionBody(
-                  from: fmt.format(prediction.predictedNextStart),
-                  to: fmt.format(prediction.predictedNextStartRangeEnd),
-                ),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: BloomColors.phaseMenstrual,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.2,
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.s8),
-              Text(
-                t.insights.ovulationLabel(
-                  date: fmt.format(prediction.predictedOvulation),
-                ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.s16),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: BloomSpacing.s12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: confidenceColor.withValues(alpha: 0.16),
-                  borderRadius: BloomRadii.pillShape,
-                ),
-                child: Text(
-                  confidenceLabel,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: confidenceColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+          style: theme.textTheme.headlineSmall?.copyWith(
+            color: BloomColors.phaseMenstrual,
+            fontWeight: FontWeight.w700,
           ),
         ),
+        const SizedBox(height: BloomSpacing.s8),
+        Text(
+          t.insights.ovulationLabel(
+            date: fmt.format(prediction.predictedOvulation),
+          ),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: BloomSpacing.s16),
+        _ConfidencePill(label: confidenceLabel, color: confidenceColor),
       ],
+    );
+  }
+}
+
+class _ConfidencePill extends StatelessWidget {
+  const _ConfidencePill({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BloomSpacing.s12,
+          vertical: 4,
+        ),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.18),
+          borderRadius: BloomRadii.pillShape,
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -272,47 +244,38 @@ class _AveragesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return BloomSectionCard(
       children: <Widget>[
-        _SectionHeading(label: t.insights.averagesTitle),
-        Container(
-          padding: const EdgeInsets.all(BloomSpacing.s20),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BloomRadii.card,
-          ),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: _StatTile(
-                  label: t.insights.averageCycle,
-                  value: state.averageCycleDays == null
-                      ? '—'
-                      : t.insights.daysShort(
-                          n: state.averageCycleDays!.round().toString(),
-                        ),
-                  tone: BloomColors.phaseFollicular,
-                ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _StatTile(
+                label: t.insights.averageCycle,
+                value: state.averageCycleDays == null
+                    ? '—'
+                    : t.insights.daysShort(
+                        n: state.averageCycleDays!.round().toString(),
+                      ),
+                tone: BloomColors.phaseFollicular,
               ),
-              Container(
-                width: 0.5,
-                height: 64,
-                color: theme.colorScheme.outline.withValues(alpha: 0.4),
+            ),
+            Container(
+              width: 0.5,
+              height: 64,
+              color: theme.colorScheme.outline.withValues(alpha: 0.5),
+            ),
+            Expanded(
+              child: _StatTile(
+                label: t.insights.averagePeriod,
+                value: state.averagePeriodDays == null
+                    ? '—'
+                    : t.insights.daysShort(
+                        n: state.averagePeriodDays!.round().toString(),
+                      ),
+                tone: BloomColors.phaseMenstrual,
               ),
-              Expanded(
-                child: _StatTile(
-                  label: t.insights.averagePeriod,
-                  value: state.averagePeriodDays == null
-                      ? '—'
-                      : t.insights.daysShort(
-                          n: state.averagePeriodDays!.round().toString(),
-                        ),
-                  tone: BloomColors.phaseMenstrual,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
@@ -337,8 +300,8 @@ class _StatTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            width: 8,
-            height: 8,
+            width: 10,
+            height: 10,
             decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
           ),
           const SizedBox(height: BloomSpacing.s12),
@@ -346,7 +309,7 @@ class _StatTile extends StatelessWidget {
             label,
             style: theme.textTheme.labelMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
-              letterSpacing: 0.4,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: BloomSpacing.s4),
@@ -391,45 +354,31 @@ class _RegularityCard extends StatelessWidget {
       ),
     };
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return BloomSectionCard(
       children: <Widget>[
-        _SectionHeading(label: t.insights.regularityTitle),
-        Container(
-          padding: const EdgeInsets.all(BloomSpacing.s20),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BloomRadii.card,
+        Text(
+          label,
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                label,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.s12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(BloomRadii.pill),
-                child: LinearProgressIndicator(
-                  value: fillRatio,
-                  minHeight: 6,
-                  backgroundColor:
-                      theme.colorScheme.outline.withValues(alpha: 0.3),
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
-                ),
-              ),
-              const SizedBox(height: BloomSpacing.s8),
-              Text(
-                t.insights.regularityHint(n: sampleSize.toString()),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+        ),
+        const SizedBox(height: BloomSpacing.s12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(BloomRadii.pill),
+          child: LinearProgressIndicator(
+            value: fillRatio,
+            minHeight: 8,
+            backgroundColor:
+                theme.colorScheme.outline.withValues(alpha: 0.4),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        ),
+        const SizedBox(height: BloomSpacing.s8),
+        Text(
+          t.insights.regularityHint(n: sampleSize.toString()),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
       ],

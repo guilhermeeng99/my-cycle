@@ -3,8 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Owns the global theme mode and persists the user's choice across
-/// cold starts. Initial value is [ThemeMode.system]; the saved preference
-/// (if any) is hydrated synchronously in the constructor.
+/// cold starts.
+///
+/// Per `specs/redesign_focuspomo.md` (Decision B1), the app currently
+/// ships light-only. The cubit is kept for storage compatibility and
+/// for the future possibility of a "warm dark" variant; until then,
+/// `MaterialApp.themeMode` is hard-pinned to [ThemeMode.light] in
+/// `app_widget.dart` and the cubit's value is effectively ignored by
+/// the runtime.
+///
+/// Initial value defaults to [ThemeMode.light]; saved values that are
+/// not recognized fall back to [ThemeMode.light].
 class ThemeCubit extends Cubit<ThemeMode> {
   ThemeCubit({required SharedPreferences prefs})
     : _prefs = prefs,
@@ -18,17 +27,12 @@ class ThemeCubit extends Cubit<ThemeMode> {
     return ThemeMode.values
             .where((m) => m.name == stored)
             .firstOrNull ??
-        ThemeMode.system;
+        ThemeMode.light;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
     if (state == mode) return;
     emit(mode);
     await _prefs.setString(_key, mode.name);
-  }
-
-  Future<void> toggleLightDark() {
-    final next = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-    return setThemeMode(next);
   }
 }
